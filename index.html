@@ -1,0 +1,2260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HyperOS×IIB Token</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'MiSans VF';src:url('../MiSans VF.ttf') format('truetype');font-weight:100 900;font-style:normal;font-display:swap}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'MiSans VF','Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;background:#fff;color:#0a0a0a;display:flex;flex-direction:column}
+body.dark{background:#0a0a0a;color:#fafafa}
+
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:208px;min-width:208px;height:100%;display:flex;flex-direction:column;border-right:1px solid #e5e5e5;background:#fff;overflow:hidden;transition:width .2s cubic-bezier(.25,.46,.45,.94),min-width .2s cubic-bezier(.25,.46,.45,.94);position:relative}
+.dark .sidebar{border-right-color:#262626;background:#0a0a0a}
+.sidebar.collapsed{width:0;min-width:0;border-right:none}
+
+.sb-header{display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:52px;min-height:52px;border-bottom:1px solid #e5e5e5;flex-shrink:0}
+.dark .sb-header{border-bottom-color:#262626}
+.sb-logo{display:flex;flex-direction:column;gap:1px}
+.sb-logo-main{font-size:13px;font-weight:550;line-height:1.3;color:#0a0a0a}
+.dark .sb-logo-main{color:#fafafa}
+.sb-logo-sub{font-size:10px;color:#a3a3a3;font-weight:400}
+.sb-icons{display:flex;gap:2px}
+.ib{width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer;color:#a3a3a3;border:none;background:transparent;transition:all .1s}
+.ib:hover{background:#f5f5f5;color:#0a0a0a}
+.dark .ib:hover{background:#1c1c1c;color:#fafafa}
+
+.sb-collections{padding:8px;border-bottom:1px solid #e5e5e5;flex-shrink:0}
+.dark .sb-collections{border-bottom-color:#262626}
+.coll-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:6px;cursor:pointer;color:#525252;font-size:12px;transition:all .1s}
+.dark .coll-item{color:#737373}
+.coll-item:hover{background:#f5f5f5}
+.dark .coll-item:hover{background:#1c1c1c}
+.coll-item.active{color:#0a0a0a;font-weight:500}
+.dark .coll-item.active{color:#fafafa}
+.coll-count{font-size:11px;color:#a3a3a3}
+.coll-divider{height:1px;background:rgba(0,0,0,0.08);margin:4px 2px}
+.dark .coll-divider{background:rgba(255,255,255,0.1)}
+/* Interaction table */
+.ia-wrap{padding:0}
+.ia-section-title{background:#f7f7f7;border-bottom:1px solid #ebebeb;border-top:1px solid #ebebeb;padding:0 14px;height:36px;display:flex;align-items:center;font-size:11px;font-weight:500;color:#a3a3a3;text-transform:uppercase;letter-spacing:.05em}
+.dark .ia-section-title{background:#111;border-color:#222;color:#444}
+.ia-table{width:100%;border-collapse:collapse;table-layout:auto}
+.ia-table th{background:#f7f7f7;border-bottom:1px solid #e5e5e5;padding:0 14px;height:44px;text-align:center;font-size:11.5px;font-weight:500;color:#737373;letter-spacing:.02em;white-space:nowrap}
+.dark .ia-table th{background:#111;border-bottom-color:#262626;color:#525252}
+.ia-table th:first-child{text-align:left;width:64px}
+.ia-table th .sub{font-size:10px;opacity:.6;display:block;margin-top:1px;font-weight:400;text-transform:none;letter-spacing:0}
+.ia-table td{padding:0 14px;height:44px;vertical-align:middle;border-bottom:1px solid #f0f0f0;font-size:12.5px;text-align:center;color:#525252}
+.dark .ia-table td{border-bottom-color:#1a1a1a;color:#737373}
+.ia-table td:first-child{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;text-align:left;color:#0a0a0a;white-space:nowrap}
+.dark .ia-table td:first-child{color:#e5e5e5}
+.ia-table td.ia-note{font-size:11px;color:#a3a3a3;text-align:left;white-space:nowrap;padding-left:20px}
+.dark .ia-table td.ia-note{color:#555}
+.ia-table tr:hover td{background:#fafafa}
+.dark .ia-table tr:hover td{background:#111}
+
+.sb-search{padding:10px;border-bottom:1px solid #e5e5e5;position:relative;flex-shrink:0}
+.dark .sb-search{border-bottom-color:#262626}
+.sb-search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#a3a3a3;width:12px;height:12px;pointer-events:none}
+.sb-search input{width:100%;padding:7px 10px 7px 28px;font-size:12px;font-family:inherit;border:1px solid #e5e5e5;border-radius:6px;background:#fafafa;color:#0a0a0a;outline:none;transition:border-color .15s}
+.dark .sb-search input{border-color:#262626;background:#141414;color:#fafafa}
+.sb-search input::placeholder{color:#a3a3a3}
+.sb-search input:focus{border-color:#a3a3a3}
+
+.sb-groups{flex:1;overflow-y:auto}
+.sb-groups::-webkit-scrollbar{width:3px}
+.sb-groups::-webkit-scrollbar-thumb{background:#e5e5e5;border-radius:2px}
+.dark .sb-groups::-webkit-scrollbar-thumb{background:#333}
+.sb-groups-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 6px;font-size:10.5px;font-weight:600;color:#a3a3a3;text-transform:uppercase;letter-spacing:.05em}
+.group-list{padding:0 8px 8px}
+.gi{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:6px;cursor:pointer;color:#525252;font-size:12px;transition:all .1s}
+.dark .gi{color:#737373}
+.gi:hover{background:#f5f5f5}
+.dark .gi:hover{background:#1c1c1c}
+.gi.active{background:#f5f5f5;color:#0a0a0a;font-weight:500}
+.dark .gi.active{background:#1c1c1c;color:#fafafa}
+.gi-chevron{color:#c0c0c0;font-size:10px;width:10px;transition:transform .15s;display:inline-block;flex-shrink:0}
+.gi-chevron.expanded{transform:rotate(90deg)}
+.gi-name{flex:1}
+.gi-count{font-size:10.5px;color:#a3a3a3}
+.gi-sub{padding:0 0 6px 0;overflow:hidden}
+.gi-tok{padding:5px 10px 5px 30px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'JetBrains Mono',monospace;color:#737373;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .1s}
+.gi-tok:hover{background:#f5f5f5;color:#0a0a0a}
+.dark .gi-tok{color:#555}
+.dark .gi-tok:hover{background:#1c1c1c;color:#fafafa}
+.gi-tok.active{color:#3482ff;font-weight:500;background:#3482ff0d}
+.dark .gi-tok.active{color:#4788ff;background:#4788ff14}
+
+.sb-footer{padding:11px 14px;border-top:1px solid #e5e5e5;font-size:11.5px;color:#a3a3a3;cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;transition:color .1s}
+.dark .sb-footer{border-top-color:#262626}
+.sb-footer:hover{color:#0a0a0a}
+.dark .sb-footer:hover{color:#fafafa}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;transition:margin-right .2s cubic-bezier(.25,.46,.45,.94)}
+
+.main-hd{display:flex;align-items:center;padding:0 16px;height:52px;min-height:52px;border-bottom:1px solid #e5e5e5;gap:8px;flex-shrink:0}
+.dark .main-hd{border-bottom-color:#262626}
+.main-hd-left{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
+.main-hd-icon{color:#737373;flex-shrink:0}
+.main-hd-title{font-size:13px;font-weight:500;white-space:nowrap}
+.main-hd-count{font-size:12px;color:#a3a3a3;white-space:nowrap}
+.main-hd-right{display:flex;align-items:center;gap:3px;flex-shrink:0}
+
+.mode-toggle{display:flex;background:#f0f0f0;border-radius:6px;padding:2px;gap:1px;margin-right:4px}
+.dark .mode-toggle{background:#1e1e1e}
+.mode-toggle-label{font-size:11px;color:#a3a3a3;padding:0 6px 0 2px;align-self:center;white-space:nowrap;letter-spacing:.01em}
+.dark .mode-toggle-label{color:#555}
+.mode-btn{padding:6px 11px;font-size:12px;font-weight:400;cursor:pointer;border:none;outline:none;background:transparent;color:#737373;font-family:inherit;transition:all .12s;border-radius:5px;white-space:nowrap;line-height:1}
+.mode-btn.active{background:#fff;color:#0a0a0a;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.dark .mode-btn.active{background:#333;color:#fafafa;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.dark .mode-btn{color:#555}
+.hd-sep{width:1px;height:18px;background:#e5e5e5;margin:0 5px;flex-shrink:0}
+.dark .hd-sep{background:#262626}
+
+.view-btns{display:flex;background:#f0f0f0;border-radius:6px;padding:2px;gap:1px;margin:0 2px}
+.dark .view-btns{background:#1e1e1e}
+.vb{width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:5px;cursor:pointer;border:none;background:transparent;color:#a3a3a3;transition:all .12s;font-family:inherit;line-height:0}
+.vb:hover{color:#0a0a0a}
+.dark .vb:hover{color:#fafafa}
+.vb.active{background:#fff;color:#0a0a0a;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.dark .vb.active{background:#333;color:#fafafa;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+
+.export-btn{display:flex;align-items:center;gap:4px;padding:0 10px;height:28px;font-size:12px;font-family:inherit;border:1px solid #e5e5e5;border-radius:6px;background:transparent;color:#525252;cursor:pointer;transition:all .1s;white-space:nowrap;line-height:1}
+.dark .export-btn{border-color:#333;color:#a3a3a3}
+.export-btn:hover{background:#f5f5f5}
+.dark .export-btn:hover{background:#1c1c1c}
+
+.theme-btn{padding:3px 8px;font-size:12px;font-family:inherit;border:1px solid #e5e5e5;border-radius:4px;background:transparent;color:#525252;cursor:pointer;transition:all .1s;white-space:nowrap}
+.dark .theme-btn{border-color:#333;color:#a3a3a3}
+
+/* TABLE */
+.table-wrap{flex:1;overflow-y:auto;overflow-x:hidden}
+.table-wrap::-webkit-scrollbar{width:6px}
+.table-wrap::-webkit-scrollbar-thumb{background:#e5e5e5;border-radius:3px}
+.dark .table-wrap::-webkit-scrollbar-thumb{background:#333}
+
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+thead{position:sticky;top:0;z-index:10}
+thead th{background:#f7f7f7;border-bottom:1px solid #e5e5e5;padding:0 14px;height:36px;text-align:left;font-size:11.5px;font-weight:500;color:#737373;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
+.dark thead th{background:#111;border-bottom-color:#262626;color:#525252}
+th.col-name{width:32%}
+th.col-val{width:22%}
+th.col-syntax{width:28%}
+th.col-ref{width:18%}
+
+td{padding:0 14px;height:44px;vertical-align:middle;border-bottom:1px solid #f0f0f0;font-size:12.5px;transition:background .07s;overflow:hidden}
+.dark td{border-bottom-color:#1a1a1a}
+tr:hover td{background:#fafafa}
+.dark tr:hover td{background:#111}
+tr{cursor:pointer}
+
+/* section header row */
+.section-row td{background:#f7f7f7;height:36px;padding:0 14px;font-size:11px;font-weight:500;color:#a3a3a3;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #ebebeb;cursor:default}
+.dark .section-row td{background:#111;color:#444;border-bottom-color:#222}
+.section-row:hover td{background:#f7f7f7}
+.dark .section-row:hover td{background:#111}
+
+/* token name cell */
+.tok-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:#0a0a0a;display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.dark .tok-name{color:#e5e5e5}
+.tok-desc{font-size:11px;color:#a3a3a3;margin-top:1px;line-height:1.3}
+.dark .tok-desc{color:#555}
+.tok-dot{width:7px;height:7px;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:6px}
+.tok-dot.rename{background:#eab308}
+.tok-dot.new{background:#22c55e}
+.tok-dot.fix{background:#ef4444}
+
+/* value cell */
+.val-cell{display:flex;align-items:center;gap:8px}
+.swatch{width:20px;height:20px;border-radius:3px;flex-shrink:0;position:relative;overflow:hidden;background:repeating-conic-gradient(#ccc 0% 25%,#fff 0% 50%) 0 0/8px 8px}
+.swatch::after{content:'';position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1);border-radius:3px;pointer-events:none}
+.swatch-fill{position:absolute;inset:0}
+.val-hex{font-family:'JetBrains Mono',monospace;font-size:12px;color:#525252}
+.dark .val-hex{color:#a3a3a3}
+.val-text{font-family:'JetBrains Mono',monospace;font-size:12px;color:#525252;font-weight:500}
+.dark .val-text{color:#a3a3a3}
+.val-num{font-family:'JetBrains Mono',monospace;font-size:13px;color:#0a0a0a;font-weight:500;display:inline-flex;align-items:baseline;gap:2px}
+.dark .val-num{color:#e5e5e5}
+.val-unit{font-size:11px;color:#a3a3a3;font-weight:400}
+
+/* syntax cell */
+.syn-cell{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#737373;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.dark .syn-cell{color:#555}
+.syn-key{color:#7c3aed}
+.dark .syn-key{color:#a78bfa}
+.syn-attr{color:#0369a1}
+.dark .syn-attr{color:#38bdf8}
+.syn-val{color:#15803d}
+.dark .syn-val{color:#4ade80}
+.syn-tag{color:#737373}
+.dark .syn-tag{color:#555}
+
+/* ref cell */
+.ref-cell{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#a3a3a3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ref-arrow{color:#c0c0c0;margin-right:3px}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0a0a0a;color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:100;white-space:nowrap}
+.dark .toast{background:#fafafa;color:#0a0a0a}
+.toast.show{opacity:1}
+
+/* GRID VIEW */
+.grid-wrap{flex:1;overflow-y:auto;padding:16px;display:none}
+.grid-wrap::-webkit-scrollbar{width:6px}
+.grid-wrap::-webkit-scrollbar-thumb{background:#e5e5e5;border-radius:3px}
+.dark .grid-wrap::-webkit-scrollbar-thumb{background:#333}
+.grid-section{margin-bottom:24px}
+.grid-section-hd{font-size:11px;font-weight:500;color:#a3a3a3;text-transform:uppercase;letter-spacing:.05em;padding:0 2px;margin-bottom:10px}
+.dark .grid-section-hd{color:#444}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px}
+.grid-card{border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid rgba(0,0,0,.06);transition:transform .12s,box-shadow .12s}
+.dark .grid-card{border-color:rgba(255,255,255,.06)}
+.grid-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.dark .grid-card:hover{box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.grid-card.selected{border-color:#3482ff;box-shadow:0 0 0 2px rgba(52,130,255,.25);transform:translateY(-1px)}
+.dark .grid-card.selected{border-color:#3482ff;box-shadow:0 0 0 2px rgba(52,130,255,.3)}
+.grid-swatch{width:100%;height:88px;position:relative;overflow:hidden;background:repeating-conic-gradient(#ccc 0% 25%,#f5f5f5 0% 50%) 0 0/12px 12px}
+.grid-swatch::after{content:'';position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.09);pointer-events:none}
+.grid-swatch-fill{position:absolute;inset:0}
+.grid-swatch-hex{position:absolute;bottom:7px;left:8px;right:8px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grid-card-body{padding:8px 10px 9px;background:#fff}
+.dark .grid-card-body{background:#1c1c1c}
+.grid-card-name{font-family:'JetBrains Mono',monospace;font-size:11px;color:#0a0a0a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.dark .grid-card-name{color:#e5e5e5}
+.grid-card-ref{font-size:10px;color:#a3a3a3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* non-color grid previews */
+.grid-preview{width:100%;height:88px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;position:relative}
+.dark .grid-preview{background:#1a1a1a}
+.radius-shape{background:#3482ff1a;border:2px solid #3482ff33}
+/* margin: two blocks with gap */
+.sp-demo{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.sp-block{width:14px;height:36px;background:#d4d4d4;border-radius:4px;flex-shrink:0}
+.dark .sp-block{background:#3a3a3a}
+.sp-gap{height:36px;background:#3482ff14;border-left:2px solid #3482ff55;border-right:2px solid #3482ff55;flex-shrink:0;min-width:4px}
+.dark .sp-gap{background:#3482ff20;border-left-color:#3482ff66;border-right-color:#3482ff66}
+/* padding: outer box + inner block */
+.pd-demo{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.pd-outer{display:flex;align-items:center;justify-content:center;border:2px dashed #3482ff66;background:#3482ff0d;border-radius:8px;flex-shrink:0}
+.dark .pd-outer{border-color:#3482ff88;background:#3482ff18}
+.pd-inner{background:#d4d4d4;border-radius:4px;flex-shrink:0}
+.dark .pd-inner{background:#3a3a3a}
+/* shared value label */
+.sp-val{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#a3a3a3}
+.number-val-unit{font-size:11px;color:#a3a3a3;font-weight:400}
+.weight-sample{font-size:28px;color:#0a0a0a;line-height:1;font-family:'MiSans VF','MiSans','Inter',sans-serif}
+.dark .weight-sample{color:#e5e5e5}
+.types-sample{color:#0a0a0a;line-height:1;font-family:'MiSans VF','MiSans','Inter',sans-serif;max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dark .types-sample{color:#e5e5e5}
+
+/* DETAIL PANEL */
+.detail-panel{position:fixed;top:0;right:0;width:300px;height:100vh;background:#fff;border-left:1px solid #e5e5e5;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .2s cubic-bezier(.25,.46,.45,.94);z-index:50;overflow:hidden}
+.dark .detail-panel{background:#0c0c0c;border-left-color:#262626}
+.detail-panel.open{transform:translateX(0)}
+.dp-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 14px 10px;border-bottom:1px solid #f0f0f0;flex-shrink:0;min-height:88px;box-sizing:border-box}
+.dark .dp-hd{border-bottom-color:#1e1e1e}
+.dp-title{font-size:14px;font-weight:700;color:#0a0a0a;font-family:'JetBrains Mono',monospace;line-height:1.3;word-break:break-all}
+.dark .dp-title{color:#fafafa}
+.dp-path{font-size:11px;color:#c0c0c0;margin-top:3px;letter-spacing:.01em}
+.dp-desc{font-size:12px;color:#3482ff;margin-top:5px;font-weight:500}
+.dp-close{width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:4px;border:none;background:transparent;color:#a3a3a3;cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;transition:all .1s}
+.dp-close:hover{background:#f5f5f5;color:#0a0a0a}
+.dark .dp-close:hover{background:#1c1c1c;color:#fafafa}
+.dp-body{flex:1;overflow-y:auto;padding:0 0 24px}
+.dp-body::-webkit-scrollbar{width:3px}
+.dp-body::-webkit-scrollbar-thumb{background:#e5e5e5;border-radius:2px}
+.dark .dp-body::-webkit-scrollbar-thumb{background:#333}
+.dp-section{padding:12px 14px}
+.dp-section+.dp-section{border-top:1px solid #f0f0f0}
+.dark .dp-section+.dp-section{border-top-color:#1e1e1e}
+.dp-section-label{font-size:11px;font-weight:500;color:#a3a3a3;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+.dp-color-block{display:flex;gap:12px;align-items:flex-start}
+.dp-swatch-lg{width:56px;height:56px;border-radius:10px;flex-shrink:0;position:relative;overflow:hidden;background:repeating-conic-gradient(#ddd 0% 25%,#f5f5f5 0% 50%) 0 0/10px 10px;border:1px solid rgba(0,0,0,.08);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.dp-swatch-lg::after{content:'';position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);border-radius:9px;pointer-events:none}
+.dp-swatch-lg-fill{position:absolute;inset:0}
+.dp-color-vals{flex:1;min-width:0;padding-top:2px}
+.dp-color-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.dp-color-label{color:#a3a3a3;font-size:11px;width:32px;flex-shrink:0}
+.dp-color-val{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#0a0a0a}
+.dark .dp-color-val{color:#e5e5e5}
+.dp-contrast-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.dp-contrast-swatch{width:26px;height:26px;border-radius:5px;flex-shrink:0;border:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;line-height:1;letter-spacing:0}
+.dp-contrast-label{flex:1;font-size:12px;color:#525252}
+.dark .dp-contrast-label{color:#a3a3a3}
+.dp-contrast-ratio{font-family:'JetBrains Mono',monospace;font-size:12px;color:#0a0a0a;margin-right:4px}
+.dark .dp-contrast-ratio{color:#e5e5e5}
+.dp-badge{font-size:10px;font-weight:400;padding:1px 5px;border-radius:3px;white-space:nowrap}
+.dp-badge-aaa{background:#dcfce7;color:#15803d}
+.dark .dp-badge-aaa{background:#14532d;color:#4ade80}
+.dp-badge-aa{background:#dbeafe;color:#1d4ed8}
+.dark .dp-badge-aa{background:#1e3a8a;color:#60a5fa}
+.dp-badge-fail{background:#fee2e2;color:#dc2626}
+.dark .dp-badge-fail{background:#7f1d1d;color:#f87171}
+.dp-mode-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.dp-mode-label{font-size:11.5px;color:#a3a3a3;width:40px;flex-shrink:0}
+.dp-mode-swatch{width:20px;height:20px;border-radius:4px;flex-shrink:0;border:1px solid rgba(0,0,0,.06);position:relative;overflow:hidden;background:repeating-conic-gradient(#ddd 0% 25%,#f5f5f5 0% 50%) 0 0/8px 8px}
+.dp-mode-fill{position:absolute;inset:0}
+.dp-mode-val{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#525252}
+.dark .dp-mode-val{color:#a3a3a3}
+.dp-mode-row.active .dp-mode-label{color:#3482ff;font-weight:600}
+.dp-mode-row.active .dp-mode-val{color:#0a0a0a;font-weight:500}
+.dark .dp-mode-row.active .dp-mode-val{color:#fafafa}
+.dp-chain-item{display:flex;align-items:center;gap:8px;padding:3px 0}
+.dp-chain-swatch{width:20px;height:20px;border-radius:4px;flex-shrink:0;border:1px solid rgba(0,0,0,.06);position:relative;overflow:hidden;background:repeating-conic-gradient(#ddd 0% 25%,#f5f5f5 0% 50%) 0 0/8px 8px}
+.dp-chain-fill{position:absolute;inset:0}
+.dp-chain-name{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#0a0a0a;word-break:break-all}
+.dark .dp-chain-name{color:#e5e5e5}
+.dp-chain-arrow{font-size:11px;color:#c0c0c0;padding:1px 0 1px 28px}
+.dp-code-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.dp-code-tabs{display:flex;align-items:center;gap:4px}
+.dp-tab{padding:3px 10px;font-size:12px;font-family:inherit;border-radius:4px;border:1px solid #e5e5e5;background:transparent;color:#737373;cursor:pointer;transition:all .1s}
+.dark .dp-tab{border-color:#333;color:#737373}
+.dp-tab.active{background:#0a0a0a;color:#fff;border-color:#0a0a0a}
+.dark .dp-tab.active{background:#fafafa;color:#0a0a0a;border-color:#fafafa}
+.dp-code-block{background:#f7f7f7;border-radius:6px;padding:10px 12px}
+.dark .dp-code-block{background:#141414}
+.dp-code-text{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#525252;word-break:break-all;line-height:1.6;white-space:pre-wrap}
+.dark .dp-code-text{color:#a3a3a3}
+.dp-copy-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:5px;border:1px solid #e5e5e5;background:#fff;color:#737373;cursor:pointer;transition:all .1s;flex-shrink:0}
+.dark .dp-copy-btn{border-color:#333;background:#1c1c1c;color:#737373}
+.dp-copy-btn:hover{background:#f5f5f5;color:#0a0a0a;border-color:#c0c0c0}
+.dark .dp-copy-btn:hover{background:#262626;color:#fafafa;border-color:#555}
+.dp-copy-btn.copied{color:#22c55e;border-color:#22c55e}
+tr.selected td{background:#f0f6ff!important}
+.dark tr.selected td{background:#0d1f3c!important}
+tr.selected td:first-child{border-left:2px solid #3482ff;padding-left:12px}
+
+/* theme btn in toolbar */
+.theme-icon-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;color:#737373;border:none;background:transparent;transition:all .1s;flex-shrink:0}
+.theme-icon-btn:hover{background:#f5f5f5;color:#0a0a0a}
+.dark .theme-icon-btn:hover{background:#1c1c1c;color:#fafafa}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 24px;color:#a3a3a3;gap:8px}
+.empty-state-icon{width:36px;height:36px;opacity:.3}
+.empty-state-title{font-size:13px;color:#525252}
+.dark .empty-state-title{color:#737373}
+.empty-state-sub{font-size:12px;text-align:center}
+.empty-clear{margin-top:4px;padding:4px 14px;font-size:12px;font-family:inherit;border:1px solid #e5e5e5;border-radius:5px;background:transparent;color:#525252;cursor:pointer;transition:all .1s}
+.dark .empty-clear{border-color:#333;color:#a3a3a3}
+.empty-clear:hover{background:#f5f5f5}
+.dark .empty-clear:hover{background:#1c1c1c}
+
+/* SHORTCUT PANEL */
+.shortcut-panel{position:absolute;bottom:44px;left:0;right:0;background:#fff;border-top:1px solid #e5e5e5;padding:10px 14px;display:none;flex-direction:column;gap:6px;box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+.dark .shortcut-panel{background:#0a0a0a;border-top-color:#262626;box-shadow:0 -4px 16px rgba(0,0,0,.4)}
+.shortcut-panel.open{display:flex}
+.sc-row{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:#525252}
+.dark .sc-row{color:#737373}
+.sc-key{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:#f0f0f0;color:#0a0a0a;padding:1px 6px;border-radius:4px;white-space:nowrap;border:1px solid #e0e0e0}
+.dark .sc-key{background:#1e1e1e;color:#e5e5e5;border-color:#333}
+
+/* EXPORT MODAL */
+.exp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .15s}
+.exp-overlay.open{opacity:1;pointer-events:all}
+.exp-modal{background:#fff;border-radius:14px;width:680px;max-width:92vw;max-height:62vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.18);transform:scale(.97);transition:transform .15s}
+.dark .exp-modal{background:#111;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.exp-overlay.open .exp-modal{transform:scale(1)}
+.exp-hd{display:flex;align-items:center;justify-content:space-between;padding:22px 24px 0;flex-shrink:0}
+.exp-title{font-size:17px;font-weight:700;color:#0a0a0a}
+.dark .exp-title{color:#fafafa}
+.exp-close-btn{width:28px;height:28px;border:none;background:transparent;font-size:22px;color:#a3a3a3;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:6px;line-height:1;transition:all .1s}
+.exp-close-btn:hover{background:#f5f5f5;color:#0a0a0a}
+.dark .exp-close-btn:hover{background:#1c1c1c;color:#fafafa}
+.exp-fmt-row{display:flex;align-items:center;gap:10px;padding:16px 24px 0;flex-shrink:0}
+.exp-fmt-label{font-size:13px;color:#a3a3a3;flex-shrink:0}
+.exp-fmt-tabs{display:flex;background:#f0f0f0;border-radius:8px;padding:3px;gap:1px}
+.dark .exp-fmt-tabs{background:#1c1c1c}
+.exp-tab{padding:4px 14px;font-size:12.5px;font-family:inherit;border:none;background:transparent;color:#737373;cursor:pointer;border-radius:6px;transition:all .15s;white-space:nowrap}
+.exp-tab.active{background:#fff;color:#0a0a0a;font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.dark .exp-tab.active{background:#333;color:#fafafa}
+.dark .exp-tab{color:#555}
+.exp-count{margin-left:auto;font-size:12px;color:#a3a3a3;flex-shrink:0}
+.exp-preview{flex:1;min-height:0;margin:14px 24px;overflow-x:hidden;overflow-y:auto;background:#f7f7f7;border-radius:10px;padding:16px 18px;border:1px solid rgba(0,0,0,.05)}
+.dark .exp-preview{background:#080808;border-color:rgba(255,255,255,.05)}
+.exp-preview::-webkit-scrollbar{width:5px}
+.exp-preview::-webkit-scrollbar-thumb{background:#dedede;border-radius:3px}
+.dark .exp-preview::-webkit-scrollbar-thumb{background:#2a2a2a}
+.exp-code{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.75;white-space:pre-wrap;word-break:break-all;color:#525252;display:block}
+.dark .exp-code{color:#a3a3a3}
+.exp-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 24px 22px;flex-shrink:0}
+.exp-footer-right{display:flex;align-items:center;gap:10px}
+.exp-all-btn{display:flex;align-items:center;gap:6px;padding:8px 18px;font-size:13px;font-family:inherit;border:1px solid #c8d8f0;border-radius:8px;background:#f0f6ff;color:#3482ff;cursor:pointer;transition:all .1s;font-weight:500;white-space:nowrap}
+.dark .exp-all-btn{border-color:#2a3f5f;background:#1a2a3f;color:#5a9bff}
+.exp-all-btn:hover{background:#e0eeff;border-color:#3482ff}
+.exp-copy2{display:flex;align-items:center;gap:6px;padding:8px 18px;font-size:13px;font-family:inherit;border:1px solid #e5e5e5;border-radius:8px;background:#fff;color:#525252;cursor:pointer;transition:all .1s;font-weight:500}
+.dark .exp-copy2{border-color:#333;background:#1c1c1c;color:#a3a3a3}
+.exp-copy2:hover{background:#f5f5f5;border-color:#c0c0c0}
+.dark .exp-copy2:hover{background:#262626}
+.exp-dl{display:flex;align-items:center;gap:6px;padding:8px 20px;font-size:13px;font-family:inherit;border:none;border-radius:8px;background:#0a0a0a;color:#fff;cursor:pointer;font-weight:500;transition:all .1s}
+.dark .exp-dl{background:#fafafa;color:#0a0a0a}
+.exp-dl:hover{background:#333}
+.dark .exp-dl:hover{background:#d0d0d0}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo">
+        <div class="sb-logo-main">Hyper<span style="color:#3482ff">OS</span> × IIB Token</div>
+        <div class="sb-logo-sub">Design Token Viewer</div>
+      </div>
+      <div class="sb-icons">
+        <button class="ib" id="sb-collapse-btn" onclick="toggleSidebar()" title="收起侧边栏">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M5 8l-2 4 2 4" stroke-width="1.5"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="sb-collections" id="sb-coll"></div>
+    <div class="sb-search">
+      <svg class="sb-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="搜索 Token..." id="search-input" oninput="onSearch(this.value)">
+    </div>
+    <div class="sb-groups">
+      <div class="sb-groups-hd"><span>TOKEN 组</span></div>
+      <div class="group-list" id="group-list"></div>
+    </div>
+    <div class="shortcut-panel" id="shortcut-panel">
+      <div class="sc-row"><span>聚焦搜索</span><span class="sc-key">⌘K</span></div>
+      <div class="sc-row"><span>关闭面板</span><span class="sc-key">ESC</span></div>
+      <div class="sc-row"><span>查看详情</span><span class="sc-key">点击行</span></div>
+      <div class="sc-row"><span>切换视图</span><span class="sc-key">⌘G</span></div>
+      <div style="margin-top:4px;padding-top:6px;border-top:1px solid #f0f0f0;font-size:10.5px;color:#c0c0c0">HyperOS Token Viewer · v1.0</div>
+    </div>
+    <div class="sb-footer" onclick="toggleShortcutPanel()" id="sb-footer">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></svg>
+      快捷键
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="main-hd">
+      <div class="main-hd-left">
+        <button class="ib" id="sb-expand-btn" onclick="toggleSidebar()" title="展开侧边栏" style="display:none;margin-right:2px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M13 8l2 4-2 4" stroke-width="1.5"/></svg>
+        </button>
+        <svg class="main-hd-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+        <span class="main-hd-title" id="hd-title">Feature Token</span>
+        <span class="main-hd-count" id="hd-count"></span>
+      </div>
+      <div class="main-hd-right">
+        <span class="mode-toggle-label">令牌</span>
+        <div class="mode-toggle" id="mode-toggle" title="切换令牌模式（不影响界面主题）">
+          <button class="mode-btn active" id="btn-light" onclick="setMode('L')">Light</button>
+          <button class="mode-btn" id="btn-dark" onclick="setMode('D')">Dark</button>
+        </div>
+        <div class="view-btns">
+          <button class="vb active" id="vb-list" title="列表视图" onclick="setView('list')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+          <button class="vb" id="vb-grid" title="网格视图" onclick="setView('grid')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </button>
+        </div>
+        <div class="hd-sep"></div>
+        <button class="export-btn" onclick="openExportModal()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          导出
+        </button>
+        <button class="theme-icon-btn" id="theme-btn" onclick="toggleTheme()" title="切换界面明暗（与令牌模式独立）">
+          <svg id="theme-icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="theme-icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="table-wrap" id="table-wrap">
+      <table id="token-table">
+        <thead>
+          <tr>
+            <th class="col-name">TOKEN NAME</th>
+            <th class="col-val">VALUE</th>
+            <th class="col-syntax">CODE SYNTAX</th>
+            <th class="col-ref">REFERENCE</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div id="interaction-wrap" style="display:none"></div>
+    </div>
+    <div class="grid-wrap" id="grid-wrap"></div>
+  </main>
+</div>
+<div class="detail-panel" id="detail-panel">
+  <div class="dp-hd">
+    <div>
+      <div class="dp-title" id="dp-title"></div>
+      <div class="dp-path" id="dp-path"></div>
+      <div class="dp-desc" id="dp-desc" style="display:none"></div>
+    </div>
+    <button class="dp-close" onclick="closeDetail()">×</button>
+  </div>
+  <div class="dp-body" id="dp-body"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<div class="exp-overlay" id="exp-overlay" onclick="if(event.target===this)closeExportModal()">
+  <div class="exp-modal">
+    <div class="exp-hd">
+      <span class="exp-title">导出设计令牌</span>
+      <button class="exp-close-btn" onclick="closeExportModal()">×</button>
+    </div>
+    <div class="exp-fmt-row">
+      <span class="exp-fmt-label">格式：</span>
+      <div class="exp-fmt-tabs">
+        <button class="exp-tab active" data-fmt="android" onclick="setExportFmt('android')">Android XML</button>
+        <button class="exp-tab" data-fmt="css" onclick="setExportFmt('css')">CSS</button>
+        <button class="exp-tab" data-fmt="json" onclick="setExportFmt('json')">JSON (原始数据)</button>
+      </div>
+      <span class="exp-count" id="exp-count"></span>
+    </div>
+    <div class="exp-preview" id="exp-preview"><code class="exp-code" id="exp-code"></code></div>
+    <div class="exp-footer">
+      <button class="exp-all-btn" onclick="downloadAllJson()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        导出全部 JSON
+      </button>
+      <div class="exp-footer-right">
+        <button class="exp-copy2" id="exp-copy-btn2" onclick="copyExportContent()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          复制
+        </button>
+        <button class="exp-dl" onclick="downloadExport()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载文件
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const DATA = {
+
+feature: [
+  { group:'文字图标色', tokens:[
+    { name:'on_surface',              L:{h:'000000',r:'black/color-black-level1'},     D:{h:'F2FFFFFF',r:null} },
+    { name:'on_surface_secondary',    L:{h:'CC000000',r:'black/color-black-level3'},   D:{h:'CCFFFFFF',r:null} },
+    { name:'on_surface_tertiary',     L:{h:'99000000',r:'black/color-black-level4'},   D:{h:'80FFFFFF',r:null} },
+    { name:'on_surface_quaternary',   L:{h:'66000000',r:'black/color-black-level5'},   D:{h:'80FFFFFF',r:null} },
+    { name:'on_surface_octonary',     L:{h:'4C000000',r:'black/color-black-level6'},   D:{h:'4DFFFFFF',r:null} },
+    { name:'on_surface_right_icon',   L:{h:'4C000000',r:'black/color-black-level6'},   D:{h:'66FFFFFF',r:null} },
+    { name:'on_surface_right_button_bg',L:{h:'0D000000',r:'black/color-black-level9-1'},D:{h:'33FFFFFF',r:null} },
+    { name:'on_surface_button_disable',L:{h:'FFFFFF',r:'white/color-white-level1'},    D:{h:'4DFFFFFF',r:null} },
+    { name:'on_surface_empty_state',  L:{h:'33000000',r:'black/color-black-level6-1'}, D:{h:'33FFFFFF',r:null} },
+  ]},
+  { group:'元素色', tokens:[
+    { name:'surface_container',       L:{h:'0A000000',r:'black/color-black-level10'},  D:{h:'14FFFFFF',r:null} },
+    { name:'surface_container_low',   L:{h:'0F000000',r:'black/color-black-level9'},   D:{h:'24FFFFFF',r:null} },
+    { name:'surface_container_medium',L:{h:'14000000',r:'black/color-black-level8'},   D:{h:'24FFFFFF',r:null} },
+    { name:'surface_container_high',  L:{h:'1A000000',r:'black/color-black-level7'},   D:{h:'33FFFFFF',r:null} },
+    { name:'container_list',          L:{h:'FFFFFF',r:'white/color-white-level1'},      D:{h:'24FFFFFF',r:null} },
+    { name:'container_input',         L:{h:'FFFFFF',r:'white/color-white-level1'},      D:{h:'24FFFFFF',r:null} },
+    { name:'container_list_solid',    L:{h:'FFFFFF',r:'white/color-white-level1'},      D:{h:'4C4C4C',r:null} },
+    { name:'container_notice_bar',    L:{h:'0A000000',r:'black/color-black-level10'},   D:{h:'24FFFFFF',r:null} },
+    { name:'container_list_hover',    L:{h:'0F000000',r:null},                          D:{h:'0FFFFFFF',r:null} },
+    { name:'container_list_touch',    L:{h:'1F000000',r:null},                          D:{h:'1FFFFFFF',r:null} },
+    { name:'container_nav',           L:{h:'0D000000',r:null},                          D:{h:'1FFFFFFF',r:null} },
+  ]},
+  { group:'全系统色板', tokens:[
+    { name:'apricot_orange',  L:{h:'FF9F05',r:'apricotorange/color-apricotorange-light-level1'}, D:{h:'FFA30F',r:'apricotorange/color-apricotorange-dark-level1'} },
+    { name:'black',           L:{h:'000000',r:'black/color-black-level1'},                       D:{h:'000000',r:'black/color-black-level1'} },
+    { name:'blue',            L:{h:'3482FF',r:'blue/color-blue-light-level1'},                   D:{h:'4788FF',r:'blue/color-blue-dark-level1'} },
+    { name:'chartreuse',      L:{h:'94E203',r:'chartreuse/color-chartreuse-light'},              D:{h:'9FE421',r:'chartreuse/color-chartreuse-dark'} },
+    { name:'cyan',            L:{h:'0FCACA',r:'cyan/color-cyan-light'},                          D:{h:'13CDCD',r:'cyan/color-cyan-dark'} },
+    { name:'deep_orange',     L:{h:'FF612E',r:'deeporange/color-deeporange-light-level1'},       D:{h:'FF6A05',r:'deeporange/color-deeporange-dark-level1'} },
+    { name:'gray',            L:{h:'8C9DB0',r:'grey/color-grey-light-level1'},                   D:{h:'92A1B4',r:'grey/color-grey-dark-level1'} },
+    { name:'green',           L:{h:'1DCD3A',r:'green/color-green-light-level1'},                 D:{h:'28D244',r:'green/color-green-dark-level1'} },
+    { name:'lemon_yellow',    L:{h:'FFD000',r:'lemonyellow/color-lemonyellow-light'},            D:{h:'FFDD33',r:'lemonyellow/color-lemonyellow-dark'} },
+    { name:'magenta',         L:{h:'E74095',r:'magenta/color-magenta-light'},                    D:{h:'EE4F9F',r:'magenta/color-magenta-dark'} },
+    { name:'orange',          L:{h:'FF6900',r:'orange/color-orange-light-level1'},               D:{h:'F97A1F',r:'orange/color-orange-dark-level1'} },
+    { name:'purple',          L:{h:'7767F9',r:'purple/color-purple-light-level1'},               D:{h:'8370FF',r:'purple/color-purple-dark-level1'} },
+    { name:'red',             L:{h:'FA382E',r:'red/color-red-light-level1'},                     D:{h:'FA4238',r:'red/color-red-dark-level1'} },
+    { name:'sky_blue',        L:{h:'29A9FF',r:'skyblue/color-skyblue-light'},                    D:{h:'36ACFC',r:'skyblue/color-skyblue-dark'} },
+    { name:'turquoise',       L:{h:'0CCE94',r:'turquoise/color-turquoise-light'},                D:{h:'11D097',r:'turquoise/color-turquoise-dark'} },
+    { name:'violet',          L:{h:'B74AF7',r:'violet/color-violet-light'},                      D:{h:'BD57FA',r:'violet/color-violet-dark'} },
+    { name:'white',           L:{h:'FFFFFF',r:'white/color-white-level1'},                       D:{h:'FFFFFF',r:'white/color-white-level1'} },
+    { name:'yellow',          L:{h:'FFB80F',r:'yellow/color-yellow-light-level1'},               D:{h:'FFBF0F',r:'yellow/color-yellow-dark-level1'} },
+  ]},
+  { group:'分割线', tokens:[
+    { name:'outline', L:{h:'1A000000',r:'black/color-black-level7'}, D:{h:'33FFFFFF',r:'white/color-white-level7'} },
+  ]},
+  { group:'系统主色', tokens:[
+    { name:'on_primary',   L:{h:'FFFFFF',  r:'white/color-white-level1'},       D:{h:'E6FFFFFF',r:'white/color-white-level2'} },
+    { name:'on_secondary', L:{h:'3482FF',  r:'blue/color-blue-light-level1'},   D:{h:'4788FF',  r:'blue/color-blue-dark-level1'} },
+    { name:'on_tertiary',  L:{h:'CC000000',r:'black/color-black-level3'},       D:{h:'CCFFFFFF',r:'white/color-white-level3'} },
+    { name:'primary',      L:{h:'3482FF',  r:'blue/color-blue-light-level1'},   D:{h:'4788FF',  r:'blue/color-blue-dark-level1'} },
+    { name:'secondary',    L:{h:'143482FF',r:'blue/color-blue-light-level3'},   D:{h:'404788FF',r:'blue/color-blue-dark-level3'} },
+    { name:'tertiary',     L:{h:'0F000000',r:'black/color-black-level9'},       D:{h:'24FFFFFF',r:'white/color-white-level8'} },
+  ]},
+  { group:'系统功能色', tokens:[
+    { name:'caution',           L:{h:'FF9F05',  r:'apricotorange/color-apricotorange-light-level1'}, D:{h:'FFA30F',  r:'apricotorange/color-apricotorange-dark-level1'} },
+    { name:'caution_container', L:{h:'1AFF9F05',r:'apricotorange/color-apricotorange-light-level2'}, D:{h:'38FFA30F',r:'apricotorange/color-apricotorange-dark-level2'} },
+    { name:'error',             L:{h:'FA382E',  r:'red/color-red-light-level1'},   D:{h:'FA4238',  r:'red/color-red-dark-level1'} },
+    { name:'error_container',   L:{h:'14FA382E',r:'red/color-red-light-level3'},   D:{h:'38FA4238',r:'red/color-red-dark-level3'} },
+    { name:'error_disable',     L:{h:'4CFA382E',r:'red/color-red-light-level2'},   D:{h:'4CFA4238',r:'red/color-red-dark-level2'} },
+  ]},
+  { group:'线框插图色', tokens:[
+    { name:'container_illustration_primary',   L:{h:'BFC3D8',r:'grey/color-grey-illustration-light-level1'}, D:{h:'666666',r:'grey/color-grey-illustration-dark-level1'} },
+    { name:'container_illustration_secondary', L:{h:'CED2E0',r:'grey/color-grey-illustration-light-level2'}, D:{h:'565656',r:'grey/color-grey-illustration-dark-level2'} },
+    { name:'container_illustration_tertiary',  L:{h:'DFE1EB',r:'grey/color-grey-illustration-light-level3'}, D:{h:'424242',r:'grey/color-grey-illustration-dark-level3'} },
+    { name:'container_illustration_quaternary',L:{h:'E9EAF0',r:'grey/color-grey-illustration-light-level4'}, D:{h:'333333',r:'grey/color-grey-illustration-dark-level4'} },
+  ]},
+  { group:'背景色', tokens:[
+    { name:'surface',          L:{h:'FFFFFF',  r:'white/color-white-level1'},  D:{h:'000000',  r:'black/color-black-level1'} },
+    { name:'surface_high',     L:{h:'FFFFFF',  r:'white/color-white-level1'},  D:{h:'242424',  r:'white/color-white-solid-30'} },
+    { name:'surface_highest',  L:{h:'FFFFFF',  r:'white/color-white-level1'},  D:{h:'2C2C2C',  r:'white/color-white-solid-40'} },
+    { name:'surface_low',      L:{h:'F3F3F3',  r:'black/color-black-solid-10'},D:{h:'000000',  r:'black/color-black-level1'} },
+    { name:'surface_medium',   L:{h:'FFFFFF',  r:'white/color-white-level1'},  D:{h:'242424',  r:'white/color-white-solid-30'} },
+    { name:'surface_menubar',  L:{h:'FFFFFF',  r:'white/color-white-level1'},  D:{h:'666666',  r:'white/color-white-solid-60'} },
+    { name:'surface_pop_window',L:{h:'F3F3F3', r:'black/color-black-solid-10'},D:{h:'242424',  r:'white/color-white-solid-30'} },
+    { name:'surface_hover',    L:{h:'0A000000',r:'black/color-black-level10'}, D:{h:'14FFFFFF',r:'white/color-white-level10'} },
+    { name:'surface_touch',    L:{h:'1A000000',r:'black/color-black-level7'},  D:{h:'24FFFFFF',r:'white/color-white-level8'} },
+    { name:'surface_select',   L:{h:'0F000000',r:'black/color-black-level9'},  D:{h:'1FFFFFFF',r:'white/color-white-level9'} },
+  ]},
+  { group:'遮罩色', tokens:[
+    { name:'mask',      L:{h:'33000000',r:'black/color-black-level6-1'}, D:{h:'99000000',r:'black/color-black-level4'} },
+    { name:'mask_menu', L:{h:'33000000',r:'black/color-black-level6-1'}, D:{h:'66000000',r:'black/color-black-level5'} },
+  ]},
+],
+
+color: [
+  { group:'blue', tokens:[
+    {name:'color-blue-light-level1',h:'3482FF'},{name:'color-blue-light-level2',h:'4C3482FF'},{name:'color-blue-light-level3',h:'143482FF'},
+    {name:'color-blue-dark-level1', h:'4788FF'},{name:'color-blue-dark-level2', h:'4C4788FF'},{name:'color-blue-dark-level3', h:'404788FF'},
+  ]},
+  { group:'red', tokens:[
+    {name:'color-red-light-level1',h:'FA382E'},{name:'color-red-light-level2',h:'4CFA382E'},{name:'color-red-light-level3',h:'14FA382E'},
+    {name:'color-red-dark-level1', h:'FA4238'},{name:'color-red-dark-level2', h:'4CFA4238'},{name:'color-red-dark-level3', h:'38FA4238'},
+  ]},
+  { group:'deeporange', tokens:[
+    {name:'color-deeporange-light-level1',h:'FF612E'},{name:'color-deeporange-light-level2',h:'4CFF612E'},{name:'color-deeporange-light-level3',h:'1AFF612E'},
+    {name:'color-deeporange-dark-level1', h:'FF6A05'},{name:'color-deeporange-dark-level2', h:'4CFF6A05'},{name:'color-deeporange-dark-level3', h:'33FF6A05'},
+  ]},
+  { group:'orange', tokens:[
+    {name:'color-orange-light-level1',h:'FF6900'},{name:'color-orange-light-level2',h:'4CFF6900'},{name:'color-orange-light-level3',h:'1AFF6900'},
+    {name:'color-orange-dark-level1', h:'F97A1F'},{name:'color-orange-dark-level2', h:'4CF97A1F'},{name:'color-orange-dark-level3', h:'33F97A1F'},
+  ]},
+  { group:'apricotorange', tokens:[
+    {name:'color-apricotorange-light-level1',h:'FF9F05'},{name:'color-apricotorange-light-level2',h:'1AFF9F05'},
+    {name:'color-apricotorange-dark-level1', h:'FFA30F'},{name:'color-apricotorange-dark-level2', h:'38FFA30F'},
+  ]},
+  { group:'yellow', tokens:[
+    {name:'color-yellow-light-level1',h:'FFB80F'},{name:'color-yellow-light-level2',h:'4CFFB80F'},{name:'color-yellow-light-level3',h:'1AFFB80F'},
+    {name:'color-yellow-dark-level1', h:'FFBF0F'},{name:'color-yellow-dark-level2', h:'4CFFBF0F'},{name:'color-yellow-dark-level3', h:'38ECA200'},
+  ]},
+  { group:'lemonyellow', tokens:[
+    {name:'color-lemonyellow-light',h:'FFD000'},{name:'color-lemonyellow-dark',h:'FFDD33'},
+  ]},
+  { group:'chartreuse', tokens:[
+    {name:'color-chartreuse-light',h:'94E203'},{name:'color-chartreuse-dark',h:'9FE421'},
+  ]},
+  { group:'green', tokens:[
+    {name:'color-green-light-level1',h:'1DCD3A'},{name:'color-green-light-level2',h:'4C1DCD3A'},{name:'color-green-light-level3',h:'1A1DCD3A'},
+    {name:'color-green-dark-level1', h:'28D244'},{name:'color-green-dark-level2', h:'4C28D244'},{name:'color-green-dark-level3', h:'3310C550'},
+  ]},
+  { group:'turquoise', tokens:[
+    {name:'color-turquoise-light',h:'0CCE94'},{name:'color-turquoise-dark',h:'11D097'},
+  ]},
+  { group:'cyan', tokens:[
+    {name:'color-cyan-light',h:'0FCACA'},{name:'color-cyan-dark',h:'13CDCD'},
+  ]},
+  { group:'skyblue', tokens:[
+    {name:'color-skyblue-light',h:'29A9FF'},{name:'color-skyblue-dark',h:'36ACFC'},
+  ]},
+  { group:'purple', tokens:[
+    {name:'color-purple-light-level1',h:'7767F9'},{name:'color-purple-light-level2',h:'4C7767F9'},{name:'color-purple-light-level3',h:'1A7767F9'},
+    {name:'color-purple-dark-level1', h:'8370FF'},{name:'color-purple-dark-level2', h:'4C8370FF'},{name:'color-purple-dark-level3', h:'336866EE'},
+  ]},
+  { group:'violet', tokens:[
+    {name:'color-violet-light',h:'B74AF7'},{name:'color-violet-dark',h:'BD57FA'},
+  ]},
+  { group:'magenta', tokens:[
+    {name:'color-magenta-light',h:'E74095'},{name:'color-magenta-dark',h:'EE4F9F'},
+  ]},
+  { group:'grey', tokens:[
+    {name:'color-grey-light-level1',h:'8C9DB0'},{name:'color-grey-light-level2',h:'4C8C9DB0'},{name:'color-grey-light-level3',h:'1A8C9DB0'},
+    {name:'color-grey-dark-level1', h:'92A1B4'},{name:'color-grey-dark-level2', h:'4C92A1B4'},{name:'color-grey-dark-level3', h:'3392A1B4'},
+    {name:'color-grey-illustration-light-level1',h:'BFC3D8'},{name:'color-grey-illustration-light-level2',h:'CED2E0'},
+    {name:'color-grey-illustration-light-level3',h:'DFE1EB'},{name:'color-grey-illustration-light-level4',h:'E9EAF0'},
+    {name:'color-grey-illustration-dark-level1', h:'666666'},{name:'color-grey-illustration-dark-level2', h:'565656'},
+    {name:'color-grey-illustration-dark-level3', h:'424242'},{name:'color-grey-illustration-dark-level4', h:'333333'},
+  ]},
+  { group:'white', tokens:[
+    {name:'color-white-level1',h:'FFFFFF'},{name:'color-white-level1-1',h:'F2FFFFFF'},
+    {name:'color-white-level2',h:'E6FFFFFF'},{name:'color-white-level3',h:'CCFFFFFF'},
+    {name:'color-white-level3-1',h:'B2FFFFFF'},{name:'color-white-level3-2',h:'99FFFFFF'},
+    {name:'color-white-level4',h:'80FFFFFF'},{name:'color-white-level5',h:'66FFFFFF'},
+    {name:'color-white-level6',h:'4CFFFFFF'},{name:'color-white-level7',h:'33FFFFFF'},
+    {name:'color-white-level8',h:'24FFFFFF'},{name:'color-white-level9',h:'1FFFFFFF'},
+    {name:'color-white-level9-1',h:'1AFFFFFF'},{name:'color-white-level10',h:'14FFFFFF'},
+    {name:'color-white-solid-100',h:'FFFFFF'},{name:'color-white-solid-90',h:'E5E5E5'},
+    {name:'color-white-solid-80',h:'CCCCCC'},{name:'color-white-solid-70',h:'808080'},
+    {name:'color-white-solid-60',h:'666666'},{name:'color-white-solid-50',h:'4C4C4C'},
+    {name:'color-white-solid-40',h:'2C2C2C'},{name:'color-white-solid-30',h:'242424'},
+    {name:'color-white-solid-25',h:'1A1A1A'},{name:'color-white-solid-20',h:'181818'},
+    {name:'color-white-solid-10',h:'101010'},{name:'color-white-solid-00',h:'000000'},
+  ]},
+  { group:'black', tokens:[
+    {name:'color-black-level1',  h:'000000'},{name:'color-black-level1-1',h:'F2000000'},
+    {name:'color-black-level2',  h:'E6000000'},{name:'color-black-level3',h:'CC000000'},
+    {name:'color-black-level3-1',h:'B2000000'},{name:'color-black-level4',h:'99000000'},
+    {name:'color-black-level4-1',h:'80000000'},{name:'color-black-level5',h:'66000000'},
+    {name:'color-black-level6',  h:'4C000000'},{name:'color-black-level6-1',h:'33000000'},
+    {name:'color-black-level6-2',h:'24000000'},{name:'color-black-level7',h:'1A000000'},
+    {name:'color-black-level8',  h:'14000000'},{name:'color-black-level9',h:'0F000000'},
+    {name:'color-black-level9-1',h:'0D000000'},{name:'color-black-level10',h:'0A000000'},
+    {name:'color-black-solid-100',h:'000000'},{name:'color-black-solid-90',h:'1A1A1A'},
+    {name:'color-black-solid-80',h:'333333'}, {name:'color-black-solid-75',h:'4D4D4D'},
+    {name:'color-black-solid-70',h:'666666'}, {name:'color-black-solid-65',h:'808080'},
+    {name:'color-black-solid-60',h:'999999'}, {name:'color-black-solid-50',h:'B3B3B3'},
+    {name:'color-black-solid-45',h:'CCCCCC'}, {name:'color-black-solid-40',h:'E6E6E6'},
+    {name:'color-black-solid-30',h:'EBEBEB'}, {name:'color-black-solid-20',h:'F0F0F0'},
+    {name:'color-black-solid-10',h:'F3F3F3'},
+  ]},
+],
+
+radius: [
+  {name:'tiny',     value:8},
+  {name:'small',    value:12},
+  {name:'common',   value:16},
+  {name:'medium',   value:20},
+  {name:'demi_big', value:24},
+  {name:'big',      value:36},
+  {name:'circle',   value:999},
+],
+
+number: [
+  { group:'padding', tokens:[
+    {name:'padding_xs',value:8},{name:'padding_sm',value:12},{name:'padding_md',value:20},
+    {name:'padding_lg',value:28},{name:'padding_xl',value:56},
+  ]},
+  { group:'margin', tokens:[
+    {name:'top',value:4},{name:'base_horizontal',value:12},{name:'extra_horizontal',value:0},
+    {name:'bottom',value:28},{name:'item_vertical',value:12},{name:'item_horizontal',value:12},
+  ]},
+],
+
+weight: [
+  {name:'Thin',      value:150},
+  {name:'Extralight',value:200},
+  {name:'Light',     value:250},
+  {name:'Normal',    value:305},
+  {name:'Regular',   value:330},
+  {name:'Medium',    value:380},
+  {name:'Demibold',  value:450},
+  {name:'Semibold',  value:520},
+  {name:'Bold',      value:630},
+  {name:'Heavy',     value:700},
+],
+
+types: [
+  { group:'Size', tokens:[
+    {name:'Title 1',value:32},{name:'Title 2',value:24},{name:'Title 3',value:20},{name:'Title 4',value:18},
+    {name:'Headline 1',value:17},{name:'Headline 2',value:16},
+    {name:'Subtitle',value:14},{name:'Subtitle 2',value:14},{name:'Subtitle 3',value:14},
+    {name:'Body 1',value:16},{name:'Body 2',value:14},
+    {name:'Footnote 1',value:13},{name:'Footnote 2',value:11},{name:'Footnote 3',value:11},
+    {name:'Button',value:17},
+  ]},
+  { group:'Weight', tokens:[
+    {name:'Title 1',value:'Regular'},{name:'Title 2',value:'Semibold'},{name:'Title 3',value:'Medium'},{name:'Title 4',value:'Medium'},
+    {name:'Headline 1',value:'Medium'},{name:'Headline 2',value:'Medium'},
+    {name:'Subtitle',value:'Medium'},{name:'Subtitle 2',value:'Demibold'},{name:'Subtitle 3',value:'Regular'},
+    {name:'Body 1',value:'Regular'},{name:'Body 2',value:'Regular'},
+    {name:'Footnote 1',value:'Regular'},{name:'Footnote 2',value:'Regular'},{name:'Footnote 3',value:'Demibold'},
+    {name:'Button',value:'Medium'},
+  ]},
+],
+
+iib: [
+  { group:'HyperOS Blue', tokens:[
+    {name:'brand_miblue_default',   L:{h:'ff3482ff', r:'blue/color-blue-light-level1'}, D:{h:'ff4788ff', r:'blue/color-blue-dark-level1'}},
+    {name:'brand_miblue_pressed',   L:{h:'ff2f75e5'}, D:{h:'ff6199ff'}},
+    {name:'brand_miblue_disabled',  L:{h:'4d3482ff', r:'blue/color-blue-light-level2'}, D:{h:'4d4788ff'}},
+    {name:'brand_miblue_secondary', L:{h:'143482ff', r:'blue/color-blue-light-level3'}, D:{h:'334788ff'}},
+  ]},
+  { group:'GA Green', tokens:[
+    {name:'brand_ga_default',           L:{h:'ff05c474'}, D:{h:'ff05c474'}},
+    {name:'brand_ga_pressed',           L:{h:'ff05b46b'}, D:{h:'ff1eca82'}},
+    {name:'brand_ga_secondary',         L:{h:'1405c474'}, D:{h:'3305c474'}},
+    {name:'brand_ga_secondary_pressed', L:{h:'2905c474'}, D:{h:'1a05c474'}},
+    {name:'brand_ga_disabled',          L:{h:'4d000000'}, D:{h:'4dffffff'}},
+  ]},
+  { group:'Theme Orange', tokens:[
+    {name:'brand_theme_default',   L:{h:'ffff5b29'}, D:{h:'ffee4f1c'}},
+    {name:'brand_theme_pressed',   L:{h:'ffeb5426'}, D:{h:'ffeb5426'}},
+    {name:'brand_theme_disabled',  L:{h:'4dff5b29'}, D:{h:'4dee4f1c'}},
+    {name:'brand_theme_secondary', L:{h:'1aff5b29'}, D:{h:'33ee4f1c'}},
+  ]},
+  { group:'GameTurbo Blue', tokens:[
+    {name:'brand_gameturbo_default',   L:{h:'ff006fff'}, D:{h:'ff006fff'}},
+    {name:'brand_gameturbo_pressed',   L:{h:'ff005ace'}, D:{h:'ff005ace'}},
+    {name:'brand_gameturbo_disabled',  L:{h:'4d006fff'}, D:{h:'4d006fff'}},
+    {name:'brand_gameturbo_secondary', L:{h:'14006fff'}, D:{h:'33006fff'}},
+  ]},
+  { group:'GameHub Yellow', tokens:[
+    {name:'brand_gamehub_default',   L:{h:'ffffe249'}, D:{h:'ffffe249'}},
+    {name:'brand_gamehub_pressed',   L:{h:'ffffda1a'}, D:{h:'ffffda1a'}},
+    {name:'brand_gamehub_disabled',  L:{h:'33ffe249'}, D:{h:'33ffe249'}},
+    {name:'brand_gamehub_secondary', L:{h:'66ffe249'}, D:{h:'33ffe249'}},
+  ]},
+  { group:'Music Purple', tokens:[
+    {name:'brand_music_default',   L:{h:'ff6e00cc'}, D:{h:'ff6603ba'}},
+    {name:'brand_music_pressed',   L:{h:'ff6500bc'}, D:{h:'ff7217c0'}},
+    {name:'brand_music_disabled',  L:{h:'4d6e00cc'}, D:{h:'4d6603ba'}},
+    {name:'brand_music_secondary', L:{h:'1a6e00cc'}, D:{h:'336603ba'}},
+  ]},
+  { group:'AI Pet Yellow', tokens:[
+    {name:'brand_aipet_default',   L:{h:'ffffd000', r:'lemonyellow/color-lemonyellow-light'}, D:{h:'ffffd000', r:'lemonyellow/color-lemonyellow-light'}},
+    {name:'brand_aipet_pressed',   L:{h:'ffe5bb00'}, D:{h:'ffe5bb00'}},
+    {name:'brand_aipet_disabled',  L:{h:'4dffd000'}, D:{h:'4dffd000'}},
+    {name:'brand_aipet_secondary', L:{h:'1affd000'}, D:{h:'1affd000'}},
+  ]},
+],
+
+};
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function parseHex(h) {
+  h = h.replace('#','').toUpperCase();
+  if (h.length === 8) {
+    const a = parseInt(h.slice(0,2),16)/255;
+    const r = parseInt(h.slice(2,4),16);
+    const g = parseInt(h.slice(4,6),16);
+    const b = parseInt(h.slice(6,8),16);
+    return {r,g,b,a};
+  } else {
+    return {r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16),a:1};
+  }
+}
+
+function toRgba(h) {
+  const c = parseHex(h);
+  return `rgba(${c.r},${c.g},${c.b},${c.a.toFixed(3)})`;
+}
+
+function toDisplay(h) {
+  const c = parseHex(h);
+  const hex = '#' + [c.r,c.g,c.b].map(v=>('0'+v.toString(16)).slice(-2).toUpperCase()).join('');
+  if (c.a >= 0.999) return hex;
+  return hex + ' · ' + Math.round(c.a * 100) + '%';
+}
+
+function toAndroidRef(ref) {
+  if (!ref) return null;
+  // "blue/color-blue-light-level1" → "miuix_color_blue_light_level1"
+  const parts = ref.split('/');
+  const name = parts[parts.length - 1];
+  return 'miuix_color_' + name.replace(/-/g,'_').replace(/\./g,'_');
+}
+
+function toAndroidName(group, name) {
+  const n = name.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/__+/g,'_');
+  return 'miuix_default_color_' + n;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function syntaxColor(androidName, ref, hexVal) {
+  const refStr = ref ? `@color/${toAndroidRef(ref)}` : hexVal;
+  return `<span class="syn-tag">&lt;</span><span class="syn-key">color</span> <span class="syn-attr">name</span>=<span class="syn-val">"${escHtml(androidName)}"</span><span class="syn-tag">&gt;</span>${escHtml(refStr)}<span class="syn-tag">&lt;/color&gt;</span>`;
+}
+
+function syntaxDimen(name, val, unit) {
+  return `<span class="syn-tag">&lt;</span><span class="syn-key">dimen</span> <span class="syn-attr">name</span>=<span class="syn-val">"${name}"</span><span class="syn-tag">&gt;</span>${val}${unit}<span class="syn-tag">&lt;/dimen&gt;</span>`;
+}
+
+function syntaxInt(name, val) {
+  return `<span class="syn-tag">&lt;</span><span class="syn-key">integer</span> <span class="syn-attr">name</span>=<span class="syn-val">"${name}"</span><span class="syn-tag">&gt;</span>${val}<span class="syn-tag">&lt;/integer&gt;</span>`;
+}
+
+function syntaxStr(name, val) {
+  return `<span class="syn-tag">&lt;</span><span class="syn-key">string</span> <span class="syn-attr">name</span>=<span class="syn-val">"${name}"</span><span class="syn-tag">&gt;</span>${val}<span class="syn-tag">&lt;/string&gt;</span>`;
+}
+
+// ─── CSS HELPERS ──────────────────────────────────────────────────────────────
+function toCSShex(h) {
+  h = h.replace('#','').toUpperCase();
+  if (h.length === 8) return '#' + h.slice(2).toLowerCase() + h.slice(0,2).toLowerCase();
+  return '#' + h.toLowerCase();
+}
+
+function luminance(r,g,b) {
+  return [r,g,b].reduce((sum,c,i) => {
+    c /= 255;
+    c = c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4);
+    return sum + c * [0.2126,0.7152,0.0722][i];
+  }, 0);
+}
+
+function contrastWith(h, br, bg, bb) {
+  const c = parseHex(h);
+  const ra = c.r*c.a + br*(1-c.a), ga = c.g*c.a + bg*(1-c.a), ba = c.b*c.a + bb*(1-c.a);
+  const l1 = luminance(ra,ga,ba), l2 = luminance(br,bg,bb);
+  const li = Math.max(l1,l2), da = Math.min(l1,l2);
+  return (li+0.05)/(da+0.05);
+}
+
+function swatchTextStyle(h) {
+  const c = parseHex(h);
+  // blend on white background to handle semi-transparent colors
+  const r = c.r * c.a + 255 * (1 - c.a);
+  const g = c.g * c.a + 255 * (1 - c.a);
+  const b = c.b * c.a + 255 * (1 - c.a);
+  const lum = luminance(r, g, b);
+  return lum > 0.35
+    ? 'color:rgba(0,0,0,0.85);text-shadow:none'
+    : 'color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.45)';
+}
+
+function wcagBadge(ratio) {
+  if (ratio >= 7)   return `<span class="dp-badge dp-badge-aaa">AAA</span>`;
+  if (ratio >= 4.5) return `<span class="dp-badge dp-badge-aa">AA</span>`;
+  if (ratio >= 3)   return `<span class="dp-badge dp-badge-aa">AA lg</span>`;
+  return `<span class="dp-badge dp-badge-fail">Fail</span>`;
+}
+
+function syntaxCssColor(varName, hexVal) {
+  const css = toCSShex(hexVal);
+  return `<span class="syn-attr">--${escHtml(varName)}</span>: <span class="syn-val">${css}</span>;`;
+}
+function syntaxCssDimen(varName, val, unit) {
+  return `<span class="syn-attr">--${escHtml(varName)}</span>: <span class="syn-val">${val}${unit}</span>;`;
+}
+function syntaxCssInt(varName, val) {
+  return `<span class="syn-attr">--${escHtml(varName)}</span>: <span class="syn-val">${val}</span>;`;
+}
+function syntaxCssStr(varName, val) {
+  return `<span class="syn-attr">--${escHtml(varName)}</span>: <span class="syn-val">${escHtml(String(val))}</span>;`;
+}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let curColl = 'feature';
+let curMode = 'L';
+let curGroup = null; // kept for scroll-highlight only, not filtering
+let expandedGroups = new Set();
+let searchQ = '';
+let curView = 'list';
+let curSyntax = 'android';
+let dpToken = null;
+let sidebarCollapsed = false;
+
+// ─── COUNTS ──────────────────────────────────────────────────────────────────
+const COUNTS = {
+  feature: DATA.feature.reduce((s,g)=>s+g.tokens.length,0),
+  color:   DATA.color.reduce((s,g)=>s+g.tokens.length,0),
+  radius:  DATA.radius.length,
+  number:  DATA.number.reduce((s,g)=>s+g.tokens.length,0),
+  weight:  DATA.weight.length,
+  types:   DATA.types.reduce((s,g)=>s+g.tokens.length,0),
+  iib:     DATA.iib.reduce((s,g)=>s+g.tokens.length,0),
+  interaction: 0,
+};
+
+const COLL_NAMES = {
+  feature:'Feature Token', color:'Color Token', radius:'Radius Token',
+  number:'Number Token', weight:'Weight Token', types:'Types Token',
+  iib:'IIB Brand Token', interaction:'交互反馈规则',
+};
+
+// ─── RENDER SIDEBAR ───────────────────────────────────────────────────────────
+function renderSidebar() {
+  // Collections
+  const sc = document.getElementById('sb-coll');
+  sc.innerHTML = Object.keys(COLL_NAMES).map(id => `
+    ${(id === 'iib' || id === 'interaction') ? '<div class="coll-divider"></div>' : ''}
+    <div class="coll-item${curColl===id?' active':''}" onclick="switchCollection('${id}')">
+      <span>${COLL_NAMES[id]}</span>
+      ${COUNTS[id] ? `<span class="coll-count">${COUNTS[id]}</span>` : ''}
+    </div>`).join('');
+
+  // Groups
+  const gl = document.getElementById('group-list');
+  let groupsData = [];
+  if (['feature','color','number','types','iib'].includes(curColl)) {
+    groupsData = DATA[curColl].map(g => ({
+      name: g.group,
+      count: g.tokens.length,
+      tokens: g.tokens.map(t => t.name)
+    }));
+  } else if (curColl === 'radius') {
+    groupsData = [{name:'全部', count: DATA.radius.length, tokens: DATA.radius.map(t=>t.name)}];
+  } else if (curColl === 'weight') {
+    groupsData = [{name:'全部', count: DATA.weight.length, tokens: DATA.weight.map(t=>t.name)}];
+  }
+
+  gl.innerHTML = groupsData.map(g => {
+    const isExpanded = expandedGroups.has(g.name);
+    const subTokens = isExpanded ? g.tokens.map(tName => {
+      const isActive = dpToken && dpToken.coll === curColl && dpToken.group === g.name && dpToken.name === tName;
+      return `<div class="gi-tok${isActive?' active':''}" onclick="openDetail('${curColl}','${g.name}','${escHtml(tName)}')">${escHtml(tName)}</div>`;
+    }).join('') : '';
+    return `
+    <div class="gi" onclick="toggleGroup('${g.name}')">
+      <span class="gi-chevron${isExpanded?' expanded':''}">›</span>
+      <span class="gi-name">${g.name}</span>
+      <span class="gi-count">${g.count}</span>
+    </div>
+    ${subTokens ? `<div class="gi-sub">${subTokens}</div>` : ''}`;
+  }).join('');
+
+  // 交互反馈规则无 token 组，隐藏整个 TOKEN 组区块
+  document.querySelector('.sb-groups').style.display = curColl === 'interaction' ? 'none' : '';
+}
+
+// ─── RENDER TABLE ─────────────────────────────────────────────────────────────
+function renderTable() {
+  const tbody = document.getElementById('tbody');
+  const q = searchQ.toLowerCase();
+  let rows = '';
+  let visCount = 0;
+
+  function matchQ(s) { return !q || s.toLowerCase().includes(q); }
+
+  if (curColl === 'feature') {
+    const groups = DATA.feature;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      rows += `<tr class="section-row" data-grp="${escHtml(g.group)}"><td colspan="4">${g.group} &nbsp;<span style="font-weight:400;opacity:.5">${filtered.length}</span></td></tr>`;
+      filtered.forEach(t => {
+        visCount++;
+        const mdata = t[curMode];
+        const hex = mdata.h;
+        const ref = mdata.r;
+        const displayVal = toDisplay(hex);
+        const rgba = toRgba(hex);
+        const aName = 'miuix_default_color_' + t.name;
+        const synAndroid = syntaxColor(aName + (curMode==='L'?'_light':'_dark'), ref, hex);
+        const synCss = syntaxCssColor(`${g.group}-${t.name}`, hex);
+        const syn = curSyntax === 'css' ? synCss : synAndroid;
+        const refHtml = ref ? `<span class="ref-arrow">→</span>${escHtml(ref)}` : '—';
+        const rid = `feature|${g.group}|${t.name}`;
+        const desc = DESC_MAP[t.name];
+        rows += `<tr onclick="openDetail('feature','${g.group}','${t.name}')" data-rid="${rid}"${dpToken&&dpToken.rid===rid?' class="selected"':''}>
+          <td style="padding-top:9px;padding-bottom:9px"><div class="tok-name">${escHtml(t.name)}</div>${desc?`<div class="tok-desc">${escHtml(desc)}</div>`:''}</td>
+          <td><div class="val-cell"><div class="swatch"><div class="swatch-fill" style="background:${rgba}"></div></div><span class="val-hex">${escHtml(displayVal)}</span></div></td>
+          <td><div class="syn-cell">${syn}</div></td>
+          <td><div class="ref-cell">${refHtml}</div></td>
+        </tr>`;
+      });
+    });
+  }
+
+  else if (curColl === 'color') {
+    const groups = DATA.color;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      rows += `<tr class="section-row" data-grp="${escHtml(g.group)}"><td colspan="4">${g.group} &nbsp;<span style="font-weight:400;opacity:.5">${filtered.length}</span></td></tr>`;
+      filtered.forEach(t => {
+        visCount++;
+        const displayVal = toDisplay(t.h);
+        const rgba = toRgba(t.h);
+        const aName = 'miuix_color_' + t.name.replace(/-/g,'_');
+        const colorRef = '#' + (t.h.length===8 ? t.h.slice(2) : t.h);
+        const synAndroid = syntaxColor(aName, null, colorRef);
+        const synCss = syntaxCssColor(t.name, t.h);
+        const syn = curSyntax === 'css' ? synCss : synAndroid;
+        const rid = `color|${g.group}|${t.name}`;
+        rows += `<tr onclick="openDetail('color','${g.group}','${t.name}')" data-rid="${rid}"${dpToken&&dpToken.rid===rid?' class="selected"':''}>
+          <td style="padding-top:9px;padding-bottom:9px"><div class="tok-name">${escHtml(t.name)}</div>${DESC_MAP[t.name]?`<div class="tok-desc">${escHtml(DESC_MAP[t.name])}</div>`:''}</td>
+          <td><div class="val-cell"><div class="swatch"><div class="swatch-fill" style="background:${rgba}"></div></div><span class="val-hex">${escHtml(displayVal)}</span></div></td>
+          <td><div class="syn-cell">${syn}</div></td>
+          <td><div class="ref-cell">—</div></td>
+        </tr>`;
+      });
+    });
+  }
+
+  else if (curColl === 'radius') {
+    const filtered = DATA.radius.filter(t => matchQ(t.name) || matchQ('radius'));
+    if (filtered.length) {
+      rows += `<tr class="section-row"><td colspan="4">Radius &nbsp;<span style="font-weight:400;opacity:.5">${filtered.length}</span></td></tr>`;
+      filtered.forEach(t => {
+        visCount++;
+        const aName = 'miuix_radius_' + t.name;
+        const valStr = t.value === 999 ? '999 (circle)' : t.value + 'dp';
+        const synAndroid = syntaxDimen(aName, t.value, t.value===999?'dp':' dp');
+        const synCss = syntaxCssDimen(`radius-${t.name}`, t.value, t.value===999?'px':' px');
+        const syn = curSyntax === 'css' ? synCss : synAndroid;
+        const rid = `radius|全部|${t.name}`;
+        rows += `<tr onclick="openDetail('radius','全部','${t.name}')" data-rid="${rid}"${dpToken&&dpToken.rid===rid?' class="selected"':''}>
+          <td style="padding-top:9px;padding-bottom:9px"><div class="tok-name">${escHtml(t.name)}</div>${DESC_MAP[t.name]?`<div class="tok-desc">${escHtml(DESC_MAP[t.name])}</div>`:''}</td>
+          <td><div class="val-cell"><span class="val-num">${t.value}<span class="val-unit">dp</span></span></div></td>
+          <td><div class="syn-cell">${syn}</div></td>
+          <td><div class="ref-cell">—</div></td>
+        </tr>`;
+      });
+    }
+  }
+
+  else if (curColl === 'number') {
+    const groups = DATA.number;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      rows += `<tr class="section-row" data-grp="${escHtml(g.group)}"><td colspan="4">${g.group} &nbsp;<span style="font-weight:400;opacity:.5">${filtered.length}</span></td></tr>`;
+      filtered.forEach(t => {
+        visCount++;
+        const aName = 'miuix_number_' + t.name;
+        const synAndroid = syntaxDimen(aName, t.value, ' dp');
+        const synCss = syntaxCssDimen(`${g.group}-${t.name}`, t.value, 'px');
+        const syn = curSyntax === 'css' ? synCss : synAndroid;
+        const rid = `number|${g.group}|${t.name}`;
+        rows += `<tr onclick="openDetail('number','${g.group}','${t.name}')" data-rid="${rid}"${dpToken&&dpToken.rid===rid?' class="selected"':''}>
+          <td style="padding-top:9px;padding-bottom:9px"><div class="tok-name">${escHtml(t.name)}</div>${DESC_MAP[t.name]?`<div class="tok-desc">${escHtml(DESC_MAP[t.name])}</div>`:''}</td>
+          <td><div class="val-cell"><span class="val-num">${t.value}<span class="val-unit">dp</span></span></div></td>
+          <td><div class="syn-cell">${syn}</div></td>
+          <td><div class="ref-cell">—</div></td>
+        </tr>`;
+      });
+    });
+  }
+
+  else if (curColl === 'weight') {
+    const filtered = DATA.weight.filter(t => matchQ(t.name) || matchQ('weight'));
+    if (filtered.length) {
+      rows += `<tr class="section-row"><td colspan="4">Font Weight &nbsp;<span style="font-weight:400;opacity:.5">${filtered.length}</span></td></tr>`;
+      filtered.forEach(t => {
+        visCount++;
+        const aName = 'miuix_weight_' + t.name.toLowerCase();
+        const synAndroid = syntaxInt(aName, t.value);
+        const synCss = syntaxCssInt(`weight-${t.name.toLowerCase()}`, t.value);
+        const syn = curSyntax === 'css' ? synCss : synAndroid;
+        const rid = `weight|全部|${t.name}`;
+        rows += `<tr onclick="openDetail('weight','全部','${t.name}')" data-rid="${rid}"${dpToken&&dpToken.rid===rid?' class="selected"':''}>
+          <td style="padding-top:9px;padding-bottom:9px"><div class="tok-name">${escHtml(t.name)}</div>${DESC_MAP[t.name]?`<div class="tok-desc">${escHtml(DESC_MAP[t.name])}</div>`:''}</td>
+          <td><div class="val-cell"><span class="val-num" style="font-weight:${t.value>600?'bold':t.value>400?'500':'normal'}">${t.value}</span></div></td>
+          <td><div class="syn-cell">${syn}</div></td>
+          <td><div class="ref-cell">—</div></td>
+        </tr>`;
+      });
+    }
+  }
+
+  else if (curColl === 'types') {
+    const groups = DATA.types;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      rows += `<tr class="section-row" data-grp="${escHtml(g.group)}"><td colspan="4">${g.group} &nbsp;<span style="font-weight:400;opacity:.5">${filtered.length}</span></td></tr>`;
+      filtered.forEach(t => {
+        visCount++;
+        const nKey = t.name.toLowerCase().replace(/\s+/g,'_');
+        const isSize = g.group === 'Size';
+        const aName = isSize ? `miuix_types_size_${nKey}` : `miuix_types_weight_${nKey}`;
+        const synAndroid = isSize ? syntaxDimen(aName, t.value, 'sp') : syntaxStr(aName, t.value);
+        const synCss = isSize ? syntaxCssDimen(`types-size-${nKey}`, t.value, 'sp') : syntaxCssStr(`types-weight-${nKey}`, t.value);
+        const syn = curSyntax === 'css' ? synCss : synAndroid;
+        const valCell = isSize
+          ? `<span class="val-num">${t.value}<span class="val-unit">sp</span></span>`
+          : `<span class="val-text">${escHtml(String(t.value))}</span>`;
+        const rid = `types|${g.group}|${t.name}`;
+        rows += `<tr onclick="openDetail('types','${g.group}','${t.name}')" data-rid="${rid}"${dpToken&&dpToken.rid===rid?' class="selected"':''}>
+          <td style="padding-top:9px;padding-bottom:9px"><div class="tok-name">${escHtml(t.name)}</div>${DESC_MAP[t.name]?`<div class="tok-desc">${escHtml(DESC_MAP[t.name])}</div>`:''}</td>
+          <td><div class="val-cell">${valCell}</div></td>
+          <td><div class="syn-cell">${syn}</div></td>
+          <td><div class="ref-cell">—</div></td>
+        </tr>`;
+      });
+    });
+  }
+
+  else if (curColl === 'iib') {
+    const groups = DATA.iib;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      rows += `<tr class="section-row" data-grp="${escHtml(g.group)}"><td colspan="4">${g.group} &nbsp;<span style="font-weight:400;opacity:.5">${filtered.length}</span></td></tr>`;
+      filtered.forEach(t => {
+        visCount++;
+        const mdata = t[curMode];
+        const hex = mdata.h;
+        const displayVal = toDisplay(hex);
+        const rgba = toRgba(hex);
+        const aName = 'iib_' + t.name;
+        const synAndroid = syntaxColor(aName + (curMode==='L'?'_light':'_dark'), null, hex);
+        const synCss = syntaxCssColor(t.name, hex);
+        const syn = curSyntax === 'css' ? synCss : synAndroid;
+        const desc = DESC_MAP[t.name];
+        const rid = `iib|${g.group}|${t.name}`;
+        const iibRef = mdata.r || null;
+        const iibRefHtml = iibRef ? escHtml(iibRef.split('/').pop()) : '—';
+        rows += `<tr onclick="openDetail('iib','${g.group}','${t.name}')" data-rid="${rid}"${dpToken&&dpToken.rid===rid?' class="selected"':''}>
+          <td style="padding-top:9px;padding-bottom:9px"><div class="tok-name">${escHtml(t.name)}</div>${desc?`<div class="tok-desc">${escHtml(desc)}</div>`:''}</td>
+          <td><div class="val-cell"><div class="swatch"><div class="swatch-fill" style="background:${rgba}"></div></div><span class="val-hex">${escHtml(displayVal)}</span></div></td>
+          <td><div class="syn-cell">${syn}</div></td>
+          <td><div class="ref-cell">${iibRefHtml}</div></td>
+        </tr>`;
+      });
+    });
+  }
+
+  if (!rows && q) {
+    rows = `<tr><td colspan="4"><div class="empty-state">
+      <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6M11 8v6" opacity=".5"/></svg>
+      <span class="empty-state-title">无匹配的 Token</span>
+      <span class="empty-state-sub">「${escHtml(searchQ)}」未找到结果</span>
+      <button class="empty-clear" onclick="document.getElementById('search-input').value='';onSearch('')">清除搜索</button>
+    </div></td></tr>`;
+  }
+  tbody.innerHTML = rows;
+
+  // Update header count
+  const total = COUNTS[curColl];
+  document.getElementById('hd-count').textContent = q ? (visCount ? `${visCount} / ${total}` : `0 / ${total}`) : `${total}`;
+}
+
+// ─── VIEW TOGGLE ──────────────────────────────────────────────────────────────
+const GRID_COLLS = new Set(['feature','color','radius','number','weight','types','iib']);
+
+const DESC_MAP = {
+  // 文字图标色
+  on_surface:                    '主要文字 / 图标',
+  on_surface_secondary:          '次要文字 / 图标',
+  on_surface_tertiary:           '三级文字 / 图标',
+  on_surface_quaternary:         '四级文字 / 图标',
+  on_surface_octonary:           '辅助文字 / 图标',
+  on_surface_right_icon:         '列表右侧图标',
+  on_surface_right_button_bg:    '列表右侧按钮背景',
+  on_surface_button_disable:     '禁用状态按钮文字',
+  on_surface_empty_state:        '空状态文字',
+  // 元素色
+  surface_container:             '通用容器',
+  surface_container_low:         '容器（低强调）',
+  surface_container_medium:      '容器（中强调）',
+  surface_container_high:        '容器（高强调）',
+  container_list:                '列表容器',
+  container_input:               '输入框容器',
+  container_list_solid:          '列表容器（实色）',
+  container_notice_bar:          '通知栏容器',
+  container_list_hover:          '列表悬停状态',
+  container_list_touch:          '列表触摸状态',
+  container_nav:                 '导航栏容器',
+  // 全系统色板
+  apricot_orange:                '杏橙色',
+  black:                         '黑色',
+  blue:                          '蓝色（品牌主色）',
+  chartreuse:                    '黄绿色',
+  cyan:                          '青色',
+  deep_orange:                   '深橙色',
+  gray:                          '灰色',
+  green:                         '绿色',
+  lemon_yellow:                  '柠檬黄',
+  magenta:                       '品红色',
+  orange:                        '橙色',
+  purple:                        '紫色',
+  red:                           '红色',
+  sky_blue:                      '天蓝色',
+  turquoise:                     '绿松石色',
+  violet:                        '紫罗兰',
+  white:                         '白色',
+  yellow:                        '黄色',
+  // 分割线
+  outline:                       '分割线 / 边框',
+  // 系统主色
+  on_primary:                    '主色上的文字 / 图标',
+  on_secondary:                  '辅色上的文字 / 图标',
+  on_tertiary:                   '三级色上的文字',
+  primary:                       '主题色（强调色）',
+  secondary:                     '主题色（容器）',
+  tertiary:                      '通用交互背景',
+  // 系统功能色
+  caution:                       '警告色',
+  caution_container:             '警告容器色',
+  error:                         '错误 / 危险色',
+  error_container:               '错误容器色',
+  error_disable:                 '错误禁用色',
+  // 线框插图色
+  container_illustration_primary:    '插图主色',
+  container_illustration_secondary:  '插图次色',
+  container_illustration_tertiary:   '插图三级色',
+  container_illustration_quaternary: '插图四级色',
+  // 背景色
+  surface:                       '页面背景',
+  surface_high:                  '上层背景（高）',
+  surface_highest:               '上层背景（最高）',
+  surface_low:                   '底层背景（低）',
+  surface_medium:                '中层背景',
+  surface_menubar:               '菜单栏背景',
+  surface_pop_window:            '弹窗背景',
+  surface_hover:                 '悬停状态背景',
+  surface_touch:                 '触摸反馈背景',
+  surface_select:                '选中状态背景',
+  // 遮罩色
+  mask:                          '页面遮罩',
+  mask_menu:                     '菜单遮罩',
+  // radius
+  tiny:                          '微小圆角 · 标签 / 芯片',
+  small:                         '小圆角 · 输入框',
+  common:                        '标准圆角 · 列表卡片',
+  medium:                        '中等圆角 · 模态卡片',
+  demi_big:                      '较大圆角 · 大卡片',
+  big:                           '大圆角 · 底部弹窗 / 抽屉',
+  circle:                        '胶囊形 / 完整圆形',
+  // number — padding
+  padding_xs:                    '超小内边距 · 紧凑布局',
+  padding_sm:                    '小内边距 · 列表项',
+  padding_md:                    '中等内边距 · 标准间距',
+  padding_lg:                    '大内边距 · 卡片内容',
+  padding_xl:                    '超大内边距 · 宽松页面',
+  // number — margin
+  top:                           '页面顶部外边距',
+  base_horizontal:               '水平基础外边距',
+  extra_horizontal:              '水平额外外边距',
+  bottom:                        '页面底部外边距',
+  item_vertical:                 '列表项垂直间距',
+  item_horizontal:               '列表项水平间距',
+  // weight
+  Thin:                          '极细体',
+  Extralight:                    '超细体',
+  Light:                         '细体',
+  Normal:                        '常规体',
+  Regular:                       '标准体',
+  Medium:                        '中等体',
+  Demibold:                      '次粗体',
+  Semibold:                      '半粗体',
+  Bold:                          '粗体',
+  Heavy:                         '极粗体',
+  // types — size
+  'Title 1':                     '一级标题',
+  'Title 2':                     '二级标题',
+  'Title 3':                     '三级标题',
+  'Title 4':                     '四级标题',
+  'Headline 1':                  '一级正文标题',
+  'Headline 2':                  '二级正文标题',
+  'Subtitle':                    '副标题',
+  'Subtitle 2':                  '副标题二',
+  'Subtitle 3':                  '副标题三',
+  'Body 1':                      '正文一',
+  'Body 2':                      '正文二',
+  'Footnote 1':                  '注释一',
+  'Footnote 2':                  '注释二',
+  'Footnote 3':                  '注释三',
+  'Button':                      '按钮文字',
+  // iib - HyperOS Blue
+  brand_miblue_default:          'HyperOS 蓝 · 默认',
+  brand_miblue_pressed:          'HyperOS 蓝 · 按压态',
+  brand_miblue_disabled:         'HyperOS 蓝 · 禁用态',
+  brand_miblue_secondary:        'HyperOS 蓝 · 次要 / 浅色背景',
+  // iib - GA Green
+  brand_ga_default:              'GA 绿 · 默认',
+  brand_ga_pressed:              'GA 绿 · 按压态',
+  brand_ga_secondary:            'GA 绿 · 次要 / 浅色背景',
+  brand_ga_secondary_pressed:    'GA 绿 · 次要按压态',
+  brand_ga_disabled:             'GA 绿 · 禁用态',
+  // iib - Theme Orange
+  brand_theme_default:           '主题橙 · 默认',
+  brand_theme_pressed:           '主题橙 · 按压态',
+  brand_theme_disabled:          '主题橙 · 禁用态',
+  brand_theme_secondary:         '主题橙 · 次要 / 浅色背景',
+  // iib - Music Purple
+  brand_music_default:           '音乐紫 · 默认',
+  brand_music_pressed:           '音乐紫 · 按压态',
+  brand_music_disabled:          '音乐紫 · 禁用态',
+  brand_music_secondary:         '音乐紫 · 次要 / 浅色背景',
+};
+
+function renderView() {
+  const isInteraction = curColl === 'interaction';
+  const isGrid = !isInteraction && curView === 'grid' && GRID_COLLS.has(curColl);
+  document.getElementById('table-wrap').style.display = isGrid ? 'none' : '';
+  document.getElementById('grid-wrap').style.display  = isGrid ? 'block' : 'none';
+  document.getElementById('token-table').style.display = isInteraction ? 'none' : '';
+  document.getElementById('interaction-wrap').style.display = isInteraction ? 'block' : 'none';
+  document.getElementById('hd-count').style.display = isInteraction ? 'none' : '';
+  if (isGrid) renderGrid();
+  else if (isInteraction) renderInteraction();
+  else renderTable();
+}
+
+function renderInteraction() {
+  const cols = [
+    ['常态','normal'], ['悬停','hover'], ['按下','touch'], ['选中','select'],
+    ['常态+按下','normal+touch'], ['选中+悬停','hover+select'],
+    ['悬停+按下','hover+touch'], ['选中+按下','select+touch'],
+  ];
+  const lightVals = ['0%','4%','10%','6%','0%+12%','6%+4%','4%+10%','6%+10%'];
+  const darkVals  = ['0%','8%','14%','12%','0%+14%','12%+8%','8%+14%','12%+14%'];
+
+  const ths = cols.map(([zh,en]) =>
+    `<th>${zh}<span class="sub">${en}</span></th>`).join('');
+  const lightTds = lightVals.map(v => `<td>${v}</td>`).join('');
+  const darkTds  = darkVals.map(v  => `<td>${v}</td>`).join('');
+
+  document.getElementById('interaction-wrap').innerHTML = `
+    <div class="ia-section-title">系统通用交互反馈色</div>
+    <table class="ia-table">
+      <thead><tr><th></th>${ths}<th></th></tr></thead>
+      <tbody>
+        <tr><td>light</td>${lightTds}<td class="ia-note">基于黑色压暗</td></tr>
+        <tr><td>dark</td>${darkTds}<td class="ia-note">基于白色提亮</td></tr>
+      </tbody>
+    </table>
+    <div class="ia-section-title" style="margin-top:1px">禁用色</div>
+    <table class="ia-table">
+      <tbody>
+        <tr><td style="padding-right:6px">disabled</td><td style="text-align:left;padding-left:6px;color:#525252">将组件 &amp; 颜色不透明度调至 <span style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:#0a0a0a" class="dark-val">30%</span></td></tr>
+      </tbody>
+    </table>`;
+}
+
+function setView(v) {
+  curView = v;
+  document.getElementById('vb-list').classList.toggle('active', v === 'list');
+  document.getElementById('vb-grid').classList.toggle('active', v === 'grid');
+  renderView();
+}
+
+// ─── RENDER GRID ──────────────────────────────────────────────────────────────
+function renderGrid() {
+  const wrap = document.getElementById('grid-wrap');
+  const q = searchQ.toLowerCase();
+  function matchQ(s) { return !q || s.toLowerCase().includes(q); }
+  let html = '';
+
+  if (curColl === 'feature') {
+    const groups = DATA.feature;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      html += `<div class="grid-section"><div class="grid-section-hd">${g.group} <span style="font-weight:400;opacity:.5">${filtered.length}</span></div><div class="grid-cards">`;
+      filtered.forEach(t => {
+        const mdata = t[curMode];
+        const rgba = toRgba(mdata.h);
+        const display = toDisplay(mdata.h);
+        const ref = mdata.r ? `→ ${mdata.r}` : '';
+        html += `<div class="grid-card" data-rid="feature|${g.group}|${t.name}" onclick="openDetail('feature','${g.group}','${t.name}')">
+          <div class="grid-swatch"><div class="grid-swatch-fill" style="background:${rgba}"></div><div class="grid-swatch-hex" style="${swatchTextStyle(mdata.h)}">${escHtml(display)}</div></div>
+          <div class="grid-card-body"><div class="grid-card-name">${escHtml(t.name)}</div><div class="grid-card-ref">${escHtml(ref)}</div></div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+  } else if (curColl === 'color') {
+    const groups = DATA.color;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      html += `<div class="grid-section"><div class="grid-section-hd">${g.group} <span style="font-weight:400;opacity:.5">${filtered.length}</span></div><div class="grid-cards">`;
+      filtered.forEach(t => {
+        const rgba = toRgba(t.h);
+        const display = toDisplay(t.h);
+        html += `<div class="grid-card" data-rid="color|${g.group}|${t.name}" onclick="openDetail('color','${g.group}','${t.name}')">
+          <div class="grid-swatch"><div class="grid-swatch-fill" style="background:${rgba}"></div><div class="grid-swatch-hex" style="${swatchTextStyle(t.h)}">${escHtml(display)}</div></div>
+          <div class="grid-card-body"><div class="grid-card-name">${escHtml(t.name)}</div><div class="grid-card-ref">${escHtml(g.group)}</div></div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+  }
+
+  else if (curColl === 'radius') {
+    const filtered = DATA.radius.filter(t => matchQ(t.name));
+    if (filtered.length) {
+      html += `<div class="grid-section"><div class="grid-section-hd">Radius <span style="font-weight:400;opacity:.5">${filtered.length}</span></div><div class="grid-cards">`;
+      filtered.forEach(t => {
+        const isCircle = t.value === 999;
+        const w = isCircle ? 60 : 80;
+        const h = isCircle ? 60 : 68;
+        const r = t.value;
+        html += `<div class="grid-card" data-rid="radius|全部|${t.name}" onclick="openDetail('radius','全部','${t.name}')">
+          <div class="grid-preview"><div class="radius-shape" style="width:${w}px;height:${h}px;border-radius:${r}px"></div></div>
+          <div class="grid-card-body"><div class="grid-card-name">${escHtml(t.name)}</div><div class="grid-card-ref">${t.value === 999 ? '999 (circle)' : t.value + ' dp'}</div></div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+  }
+
+  else if (curColl === 'number') {
+    const groups = DATA.number;
+    const maxVal = Math.max(...DATA.number.flatMap(g=>g.tokens.map(t=>t.value)));
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      html += `<div class="grid-section"><div class="grid-section-hd">${g.group} <span style="font-weight:400;opacity:.5">${filtered.length}</span></div><div class="grid-cards">`;
+      filtered.forEach(t => {
+        let previewHtml;
+        if (g.group === 'padding') {
+          const vp = Math.max(4, Math.round((t.value / maxVal) * 20));
+          const ow = 68, oh = 52;
+          const iw = Math.max(16, ow - vp * 2), ih = Math.max(12, oh - vp * 2);
+          previewHtml = `<div class="pd-demo"><div class="pd-outer" style="width:${ow}px;height:${oh}px"><div class="pd-inner" style="width:${iw}px;height:${ih}px"></div></div></div>`;
+        } else {
+          const gapW = t.value === 0 ? 4 : Math.max(6, Math.round((t.value / maxVal) * 80));
+          previewHtml = `<div class="sp-demo"><div class="sp-block"></div><div class="sp-gap" style="width:${gapW}px"></div><div class="sp-block"></div></div>`;
+        }
+        html += `<div class="grid-card" data-rid="number|${g.group}|${t.name}" onclick="openDetail('number','${g.group}','${t.name}')">
+          <div class="grid-preview">${previewHtml}</div>
+          <div class="grid-card-body"><div class="grid-card-name">${escHtml(t.name)}</div><div class="grid-card-ref">${t.value} dp</div></div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+  }
+
+  else if (curColl === 'weight') {
+    const filtered = DATA.weight.filter(t => matchQ(t.name));
+    if (filtered.length) {
+      html += `<div class="grid-section"><div class="grid-section-hd">Font Weight <span style="font-weight:400;opacity:.5">${filtered.length}</span></div><div class="grid-cards">`;
+      filtered.forEach(t => {
+        html += `<div class="grid-card" data-rid="weight|全部|${t.name}" onclick="openDetail('weight','全部','${t.name}')">
+          <div class="grid-preview"><span class="weight-sample" style="font-weight:${t.value}">Aa</span></div>
+          <div class="grid-card-body"><div class="grid-card-name">${escHtml(t.name)}</div><div class="grid-card-ref">${t.value}</div></div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+  }
+
+  else if (curColl === 'types') {
+    const groups = DATA.types;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      html += `<div class="grid-section"><div class="grid-section-hd">${g.group} <span style="font-weight:400;opacity:.5">${filtered.length}</span></div><div class="grid-cards">`;
+      filtered.forEach(t => {
+        const isSize = g.group === 'Size';
+        const preview = isSize
+          ? `<span class="types-sample" style="font-size:${Math.min(t.value, 32)}px">Aa</span>`
+          : `<span class="types-sample" style="font-size:22px;font-weight:${t.value === 'Medium' ? 500 : t.value === 'Semibold' ? 600 : t.value === 'Demibold' ? 550 : t.value === 'Regular' ? 400 : 400}">${escHtml(t.value)}</span>`;
+        html += `<div class="grid-card" data-rid="types|${g.group}|${t.name}" onclick="openDetail('types','${g.group}','${t.name}')">
+          <div class="grid-preview">${preview}</div>
+          <div class="grid-card-body"><div class="grid-card-name">${escHtml(t.name)}</div><div class="grid-card-ref">${isSize ? t.value + ' sp' : escHtml(String(t.value))}</div></div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+  }
+
+  else if (curColl === 'iib') {
+    const groups = DATA.iib;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      html += `<div class="grid-section"><div class="grid-section-hd">${g.group} <span style="font-weight:400;opacity:.5">${filtered.length}</span></div><div class="grid-cards">`;
+      filtered.forEach(t => {
+        const mdata = t[curMode];
+        const rgba = toRgba(mdata.h);
+        const display = toDisplay(mdata.h);
+        html += `<div class="grid-card" data-rid="iib|${g.group}|${t.name}" onclick="openDetail('iib','${g.group}','${t.name}')">
+          <div class="grid-swatch"><div class="grid-swatch-fill" style="background:${rgba}"></div><div class="grid-swatch-hex" style="${swatchTextStyle(mdata.h)}">${escHtml(display)}</div></div>
+          <div class="grid-card-body"><div class="grid-card-name">${escHtml(t.name)}</div><div class="grid-card-ref">${escHtml(g.group)}</div></div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+  }
+
+  wrap.innerHTML = html || `<div style="padding:40px;color:#a3a3a3;font-size:13px">无匹配结果</div>`;
+  // restore selected state after re-render
+  if (dpToken) {
+    const card = wrap.querySelector(`.grid-card[data-rid="${dpToken.rid}"]`);
+    if (card) card.classList.add('selected');
+  }
+}
+
+// ─── ACTIONS ──────────────────────────────────────────────────────────────────
+function switchCollection(id) {
+  curColl = id;
+  curGroup = null;
+  expandedGroups.clear();
+  const mt = document.getElementById('mode-toggle');
+  mt.style.display = (id === 'feature' || id === 'iib') ? 'flex' : 'none';
+  // auto switch to list for non-grid collections
+  if (!GRID_COLLS.has(id) && curView === 'grid') {
+    curView = 'list';
+    document.getElementById('vb-list').classList.add('active');
+    document.getElementById('vb-grid').classList.remove('active');
+  }
+  document.getElementById('vb-grid').style.display = GRID_COLLS.has(id) ? '' : 'none';
+  document.getElementById('hd-title').textContent = COLL_NAMES[id];
+  renderSidebar();
+  renderView();
+}
+
+function toggleGroup(name) {
+  if (expandedGroups.has(name)) {
+    expandedGroups.delete(name);
+  } else {
+    expandedGroups.add(name);
+    scrollToSection(name);
+  }
+  renderSidebar();
+}
+
+function scrollToSection(groupName) {
+  // works for both table and grid views
+  const wrap = document.getElementById('table-wrap');
+  const row = wrap.querySelector(`tr[data-grp="${groupName}"]`);
+  if (row) {
+    const wrapTop = wrap.getBoundingClientRect().top;
+    const rowTop  = row.getBoundingClientRect().top;
+    wrap.scrollTo({ top: wrap.scrollTop + rowTop - wrapTop - 8, behavior: 'smooth' });
+  }
+}
+
+function setMode(m) {
+  curMode = m;
+  document.getElementById('btn-light').className = 'mode-btn' + (m==='L'?' active':'');
+  document.getElementById('btn-dark').className  = 'mode-btn' + (m==='D'?' active':'');
+  renderView();
+  if (dpToken) document.getElementById('dp-body').innerHTML = buildDpBody();
+}
+
+function onSearch(v) {
+  searchQ = v;
+  renderView();
+}
+
+function copyToken(name) {
+  navigator.clipboard.writeText(name).catch(()=>{});
+  const t = document.getElementById('toast');
+  t.textContent = `已复制: ${name}`;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark');
+  document.getElementById('theme-icon-moon').style.display = isDark ? 'none' : '';
+  document.getElementById('theme-icon-sun').style.display  = isDark ? '' : 'none';
+}
+
+function toggleSidebar() {
+  sidebarCollapsed = !sidebarCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
+  document.getElementById('sb-expand-btn').style.display = sidebarCollapsed ? '' : 'none';
+}
+
+// ─── DETAIL PANEL ─────────────────────────────────────────────────────────────
+function openDetail(coll, group, name) {
+  dpToken = { coll, group, name, rid:`${coll}|${group}|${name}` };
+
+  // auto-expand sidebar group
+  if (group && !expandedGroups.has(group)) expandedGroups.add(group);
+
+  // re-render sidebar to reflect expansion + active token
+  renderSidebar();
+
+  // highlight row in table
+  document.querySelectorAll('tr.selected').forEach(r => r.classList.remove('selected'));
+  const row = document.querySelector(`tr[data-rid="${dpToken.rid}"]`);
+  if (row) {
+    row.classList.add('selected');
+    // scroll table to row if it's not visible
+    const wrap = document.getElementById('table-wrap');
+    if (wrap && curView === 'list') {
+      const wt = wrap.getBoundingClientRect().top;
+      const rt = row.getBoundingClientRect().top;
+      const offset = rt - wt;
+      if (offset < 44 || offset > wrap.clientHeight - 44) {
+        wrap.scrollTo({ top: wrap.scrollTop + offset - wrap.clientHeight / 2, behavior: 'smooth' });
+      }
+    }
+  }
+
+  // highlight grid card
+  document.querySelectorAll('.grid-card.selected').forEach(c => c.classList.remove('selected'));
+  if (curView === 'grid') {
+    const card = document.querySelector(`.grid-card[data-rid="${dpToken.rid}"]`);
+    if (card) {
+      card.classList.add('selected');
+      card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  // populate header
+  document.getElementById('dp-title').textContent = name;
+  document.getElementById('dp-path').textContent = group ? `${coll}/${group}` : coll;
+  const descEl = document.getElementById('dp-desc');
+  const desc = DESC_MAP[name];
+  descEl.textContent = desc || '';
+  descEl.style.display = desc ? '' : 'none';
+
+  // build body
+  document.getElementById('dp-body').innerHTML = buildDpBody();
+  document.getElementById('detail-panel').classList.add('open');
+  document.querySelector('.main').style.marginRight = '300px';
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').classList.remove('open');
+  document.querySelector('.main').style.marginRight = '';
+  document.querySelectorAll('tr.selected').forEach(r => r.classList.remove('selected'));
+  dpToken = null;
+  renderSidebar();
+}
+
+function setSyntax(s) {
+  curSyntax = s;
+  document.querySelectorAll('.dp-tab').forEach(b => b.classList.toggle('active', b.dataset.syn === s));
+  // refresh code block in panel
+  const codeEl = document.getElementById('dp-code-text');
+  if (codeEl && dpToken) codeEl.innerHTML = buildCodeSnippet();
+  // refresh table syntax column
+  renderTable();
+}
+
+function buildCodeSnippet() {
+  if (!dpToken) return '';
+  const { coll, group, name } = dpToken;
+  if (coll === 'feature') {
+    const t = DATA.feature.flatMap(g=>g.tokens).find(x=>x.name===name);
+    if (!t) return '';
+    const h = t[curMode].h, ref = t[curMode].r;
+    if (curSyntax === 'css') {
+      return escHtml(`--${group}-${name}: ${toCSShex(h)};`);
+    }
+    const aName = 'miuix_default_color_' + name + (curMode==='L'?'_light':'_dark');
+    const refStr = ref ? `@color/${toAndroidRef(ref)}` : '#'+h;
+    return escHtml(`<color name="${aName}">${refStr}</color>`);
+  }
+  if (coll === 'color') {
+    const g = DATA.color.find(x=>x.group===group);
+    const t = g ? g.tokens.find(x=>x.name===name) : null;
+    if (!t) return '';
+    if (curSyntax === 'css') return escHtml(`--${name}: ${toCSShex(t.h)};`);
+    const aName = 'miuix_color_' + t.name.replace(/-/g,'_');
+    return escHtml(`<color name="${aName}">#${t.h.length===8?t.h.slice(2):t.h}</color>`);
+  }
+  if (coll === 'radius') {
+    const t = DATA.radius.find(x=>x.name===name);
+    if (!t) return '';
+    if (curSyntax === 'css') return escHtml(`--radius-${name}: ${t.value===999?'999':''+t.value}px;`);
+    return escHtml(`<dimen name="miuix_radius_${name}">${t.value}dp</dimen>`);
+  }
+  if (coll === 'number') {
+    const g2 = DATA.number.find(x=>x.group===group);
+    const t = g2 ? g2.tokens.find(x=>x.name===name) : null;
+    if (!t) return '';
+    if (curSyntax === 'css') return escHtml(`--${group}-${name}: ${t.value}px;`);
+    return escHtml(`<dimen name="miuix_number_${name}">${t.value} dp</dimen>`);
+  }
+  if (coll === 'weight') {
+    const t = DATA.weight.find(x=>x.name===name);
+    if (!t) return '';
+    if (curSyntax === 'css') return escHtml(`--weight-${name.toLowerCase()}: ${t.value};`);
+    return escHtml(`<integer name="miuix_weight_${name.toLowerCase()}">${t.value}</integer>`);
+  }
+  if (coll === 'types') {
+    const g3 = DATA.types.find(x=>x.group===group);
+    const t = g3 ? g3.tokens.find(x=>x.name===name) : null;
+    if (!t) return '';
+    const nKey = name.toLowerCase().replace(/\s+/g,'_');
+    const isSize = group === 'Size';
+    if (curSyntax === 'css') return isSize ? escHtml(`--types-size-${nKey}: ${t.value}sp;`) : escHtml(`--types-weight-${nKey}: ${String(t.value)};`);
+    const aName = isSize ? `miuix_types_size_${nKey}` : `miuix_types_weight_${nKey}`;
+    return isSize ? escHtml(`<dimen name="${aName}">${t.value}sp</dimen>`) : escHtml(`<string name="${aName}">${t.value}</string>`);
+  }
+  if (coll === 'iib') {
+    const gi = DATA.iib.find(x=>x.group===group);
+    const t = gi ? gi.tokens.find(x=>x.name===name) : null;
+    if (!t) return '';
+    const h = t[curMode].h;
+    const aName = `iib_${name}${curMode==='L'?'_light':'_dark'}`;
+    if (curSyntax === 'css') return escHtml(`--${name}-${curMode==='L'?'light':'dark'}: ${toCSShex(h)};`);
+    return escHtml(`<color name="${aName}">#${h}</color>`);
+  }
+  return '';
+}
+
+function buildDpBody() {
+  if (!dpToken) return '';
+  const { coll, group, name } = dpToken;
+  let html = '';
+
+  // ── Color token detail (feature/color/iib) ──
+  if (coll === 'feature' || coll === 'color' || coll === 'iib') {
+    let h, ref = null;
+    if (coll === 'feature') {
+      const t = DATA.feature.flatMap(g=>g.tokens).find(x=>x.name===name);
+      if (!t) return '';
+      h = t[curMode].h; ref = t[curMode].r;
+    } else if (coll === 'iib') {
+      const gi = DATA.iib.find(x=>x.group===group);
+      const t = gi ? gi.tokens.find(x=>x.name===name) : null;
+      if (!t) return '';
+      h = t[curMode].h; ref = t[curMode].r;
+    } else {
+      const g = DATA.color.find(x=>x.group===group);
+      const t = g ? g.tokens.find(x=>x.name===name) : null;
+      if (!t) return '';
+      h = t.h;
+    }
+    const rgba = toRgba(h);
+    const c = parseHex(h);
+    const toHSL = (r,g,b) => {
+      r/=255;g/=255;b/=255;
+      const max=Math.max(r,g,b),min=Math.min(r,g,b);
+      let h2=0,s=0,l=(max+min)/2;
+      if(max!==min){const d=max-min;s=l>.5?d/(2-max-min):d/(max+min);switch(max){case r:h2=(g-b)/d+(g<b?6:0);break;case g:h2=(b-r)/d+2;break;case b:h2=(r-g)/d+4;}h2/=6;}
+      return `hsl(${Math.round(h2*360)}, ${Math.round(s*100)}%, ${Math.round(l*100)}%)`;
+    };
+    const composedR = c.r*c.a+255*(1-c.a), composedG = c.g*c.a+255*(1-c.a), composedB = c.b*c.a+255*(1-c.a);
+    const hexDisp = '#'+[c.r,c.g,c.b].map(v=>('0'+v.toString(16)).slice(-2).toUpperCase()).join('');
+    const alphaDisp = c.a < 0.999 ? ` · ${Math.round(c.a*100)}%` : '';
+    const rgbDisp = c.a < 0.999 ? `rgba(${c.r},${c.g},${c.b},${c.a.toFixed(2)})` : `rgb(${c.r},${c.g},${c.b})`;
+
+    // current value
+    html += `<div class="dp-section">
+      <div class="dp-section-label">当前值</div>
+      <div class="dp-color-block">
+        <div class="dp-swatch-lg"><div class="dp-swatch-lg-fill" style="background:${rgba}"></div></div>
+        <div class="dp-color-vals">
+          <div class="dp-color-row"><span class="dp-color-label">HEX</span><span class="dp-color-val">${hexDisp}${alphaDisp}</span></div>
+          <div class="dp-color-row"><span class="dp-color-label">RGB</span><span class="dp-color-val">${rgbDisp}</span></div>
+          <div class="dp-color-row"><span class="dp-color-label">HSL</span><span class="dp-color-val">${toHSL(composedR,composedG,composedB)}</span></div>
+        </div>
+      </div>
+    </div>`;
+
+    // contrast
+    const crWhite = contrastWith(h, 255,255,255);
+    const crBlack = contrastWith(h, 0,0,0);
+    html += `<div class="dp-section">
+      <div class="dp-section-label">对比度</div>
+      <div class="dp-contrast-row">
+        <div class="dp-contrast-swatch" style="background:#fff;box-shadow:0 0 0 1px #e5e5e5"><span style="color:${rgba}">A</span></div>
+        <span class="dp-contrast-label">白色背景</span>
+        <span class="dp-contrast-ratio">${crWhite.toFixed(1)}:1</span>
+        ${wcagBadge(crWhite)}
+      </div>
+      <div class="dp-contrast-row">
+        <div class="dp-contrast-swatch" style="background:#000"><span style="color:${rgba}">A</span></div>
+        <span class="dp-contrast-label">黑色背景</span>
+        <span class="dp-contrast-ratio">${crBlack.toFixed(1)}:1</span>
+        ${wcagBadge(crBlack)}
+      </div>
+    </div>`;
+
+    // mode comparison (feature + iib)
+    if (coll === 'iib') {
+      const gi = DATA.iib.find(x=>x.group===group);
+      const t = gi ? gi.tokens.find(x=>x.name===name) : null;
+      if (t) {
+        const lv = toDisplay(t.L.h), dv = toDisplay(t.D.h);
+        html += `<div class="dp-section">
+          <div class="dp-section-label">模式对比</div>
+          <div class="dp-mode-row${curMode==='L'?' active':''}">
+            <span class="dp-mode-label">Light</span>
+            <div class="dp-mode-swatch"><div class="dp-mode-fill" style="background:${toRgba(t.L.h)}"></div></div>
+            <span class="dp-mode-val">${escHtml(lv)}</span>
+          </div>
+          <div class="dp-mode-row${curMode==='D'?' active':''}">
+            <span class="dp-mode-label">Dark</span>
+            <div class="dp-mode-swatch"><div class="dp-mode-fill" style="background:${toRgba(t.D.h)}"></div></div>
+            <span class="dp-mode-val">${escHtml(dv)}</span>
+          </div>
+        </div>`;
+        // reference chain
+        if (ref) {
+          const refName = ref.split('/').pop();
+          const refGroup = ref.split('/')[0];
+          const refGroup2 = DATA.color.find(g=>g.group===refGroup);
+          const refToken = refGroup2 ? refGroup2.tokens.find(x=>x.name===refName) : null;
+          html += `<div class="dp-section">
+            <div class="dp-section-label">引用链路</div>
+            <div class="dp-chain-item">
+              <div class="dp-chain-swatch"><div class="dp-chain-fill" style="background:${toRgba(h)}"></div></div>
+              <span class="dp-chain-name">${escHtml(name)}</span>
+            </div>
+            <div class="dp-chain-arrow">↓</div>
+            <div class="dp-chain-item">
+              <div class="dp-chain-swatch">${refToken?`<div class="dp-chain-fill" style="background:${toRgba(refToken.h)}"></div>`:''}</div>
+              <span class="dp-chain-name">${escHtml(refName)}</span>
+            </div>
+            ${refToken?`<div class="dp-chain-arrow">↓</div>
+            <div class="dp-chain-item">
+              <div class="dp-chain-swatch"><div class="dp-chain-fill" style="background:${toRgba(refToken.h)}"></div></div>
+              <span class="dp-chain-name">${escHtml(toDisplay(refToken.h))}</span>
+            </div>`:''}
+          </div>`;
+        }
+      }
+    }
+    if (coll === 'feature') {
+      const t = DATA.feature.flatMap(g=>g.tokens).find(x=>x.name===name);
+      const lv = toDisplay(t.L.h), dv = toDisplay(t.D.h);
+      html += `<div class="dp-section">
+        <div class="dp-section-label">模式对比</div>
+        <div class="dp-mode-row${curMode==='L'?' active':''}">
+          <span class="dp-mode-label">Light</span>
+          <div class="dp-mode-swatch"><div class="dp-mode-fill" style="background:${toRgba(t.L.h)}"></div></div>
+          <span class="dp-mode-val">${escHtml(lv)}</span>
+        </div>
+        <div class="dp-mode-row${curMode==='D'?' active':''}">
+          <span class="dp-mode-label">Dark</span>
+          <div class="dp-mode-swatch"><div class="dp-mode-fill" style="background:${toRgba(t.D.h)}"></div></div>
+          <span class="dp-mode-val">${escHtml(dv)}</span>
+        </div>
+      </div>`;
+
+      // reference chain
+      if (t[curMode].r) {
+        const refName = t[curMode].r.split('/').pop();
+        const refGroup = t[curMode].r.split('/')[0];
+        const refGroup2 = DATA.color.find(g=>g.group===refGroup);
+        const refToken = refGroup2 ? refGroup2.tokens.find(x=>x.name===refName) : null;
+        html += `<div class="dp-section">
+          <div class="dp-section-label">引用链路</div>
+          <div class="dp-chain-item">
+            <div class="dp-chain-swatch"><div class="dp-chain-fill" style="background:${toRgba(h)}"></div></div>
+            <span class="dp-chain-name">${escHtml(name)}</span>
+          </div>
+          <div class="dp-chain-arrow">↓</div>
+          <div class="dp-chain-item">
+            <div class="dp-chain-swatch">${refToken?`<div class="dp-chain-fill" style="background:${toRgba(refToken.h)}"></div>`:''}</div>
+            <span class="dp-chain-name">${escHtml(refName)}</span>
+          </div>
+          ${refToken?`<div class="dp-chain-arrow">↓</div>
+          <div class="dp-chain-item">
+            <div class="dp-chain-swatch"><div class="dp-chain-fill" style="background:${toRgba(refToken.h)}"></div></div>
+            <span class="dp-chain-name">${escHtml(toDisplay(refToken.h))}</span>
+          </div>`:''}
+        </div>`;
+      }
+    }
+  }
+
+  // ── Non-color token detail ──
+  else {
+    let valHtml = '';
+    if (coll === 'radius') {
+      const t = DATA.radius.find(x=>x.name===name);
+      if (t) valHtml = `<div style="padding:16px 0;display:flex;align-items:center;justify-content:center"><div style="width:64px;height:64px;border-radius:${Math.min(t.value,32)}px;background:#3482ff1a;border:2px solid #3482ff55"></div></div><div class="dp-color-row"><span class="dp-color-label">值</span><span class="dp-color-val">${t.value === 999 ? '999 (circle)' : t.value + ' dp'}</span></div>`;
+    } else if (coll === 'number') {
+      const g2 = DATA.number.find(x=>x.group===group);
+      const t = g2 ? g2.tokens.find(x=>x.name===name) : null;
+      if (t) valHtml = `<div class="dp-color-row"><span class="dp-color-label">值</span><span class="dp-color-val">${t.value} dp</span></div><div class="dp-color-row"><span class="dp-color-label">组</span><span class="dp-color-val">${group}</span></div>`;
+    } else if (coll === 'weight') {
+      const t = DATA.weight.find(x=>x.name===name);
+      if (t) valHtml = `<div style="padding:12px 0 16px"><span style="font-size:32px;font-weight:${t.value};font-family:'MiSans VF','MiSans','Inter',sans-serif;color:inherit">Aa</span></div><div class="dp-color-row"><span class="dp-color-label">值</span><span class="dp-color-val">${t.value}</span></div>`;
+    } else if (coll === 'types') {
+      const g3 = DATA.types.find(x=>x.group===group);
+      const t = g3 ? g3.tokens.find(x=>x.name===name) : null;
+      if (t) {
+        const isSize = group === 'Size';
+        valHtml = `<div style="padding:12px 0 16px"><span style="font-size:${isSize?Math.min(t.value,32)+'px':'22px'};font-family:'MiSans VF','MiSans','Inter',sans-serif;color:inherit">${isSize?'Aa':escHtml(String(t.value))}</span></div><div class="dp-color-row"><span class="dp-color-label">值</span><span class="dp-color-val">${escHtml(String(t.value))}${isSize?' sp':''}</span></div>`;
+      }
+    }
+    if (valHtml) html += `<div class="dp-section"><div class="dp-section-label">当前值</div>${valHtml}</div>`;
+  }
+
+  // ── Code section (all tokens) ──
+  html += `<div class="dp-section">
+    <div class="dp-section-label">代码</div>
+    <div class="dp-code-hd">
+      <div class="dp-code-tabs">
+        <button class="dp-tab${curSyntax==='android'?' active':''}" data-syn="android" onclick="setSyntax('android')">Android</button>
+        <button class="dp-tab${curSyntax==='css'?' active':''}" data-syn="css" onclick="setSyntax('css')">CSS</button>
+      </div>
+      <button class="dp-copy-btn" id="dp-copy-btn" onclick="copyCode()" title="复制">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </button>
+    </div>
+    <div class="dp-code-block">
+      <div class="dp-code-text" id="dp-code-text">${buildCodeSnippet()}</div>
+    </div>
+  </div>`;
+
+  return html;
+}
+
+function copyCode() {
+  const el = document.getElementById('dp-code-text');
+  if (el) navigator.clipboard.writeText(el.textContent.trim()).catch(()=>{});
+  const btn = document.getElementById('dp-copy-btn');
+  if (btn) {
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    }, 2000);
+  }
+  const t = document.getElementById('toast');
+  t.textContent = '已复制代码';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ─── EXPORT MODAL ─────────────────────────────────────────────────────────────
+let expFmt = 'android';
+
+function openExportModal() {
+  expFmt = 'android';
+  document.querySelectorAll('.exp-tab').forEach(b => b.classList.toggle('active', b.dataset.fmt === expFmt));
+  document.getElementById('exp-count').textContent = `${getExpTokenCount()} 个令牌`;
+  document.getElementById('exp-code').innerHTML = buildExportHtml();
+  document.getElementById('exp-overlay').classList.add('open');
+}
+
+function closeExportModal() {
+  document.getElementById('exp-overlay').classList.remove('open');
+}
+
+function setExportFmt(fmt) {
+  expFmt = fmt;
+  document.querySelectorAll('.exp-tab').forEach(b => b.classList.toggle('active', b.dataset.fmt === fmt));
+  document.getElementById('exp-code').innerHTML = buildExportHtml();
+}
+
+function getExpTokenCount() {
+  if (curColl === 'feature') return DATA.feature.reduce((s,g)=>s+g.tokens.length,0);
+  if (curColl === 'color')   return DATA.color.reduce((s,g)=>s+g.tokens.length,0);
+  if (curColl === 'radius')  return DATA.radius.length;
+  if (curColl === 'number')  return DATA.number.reduce((s,g)=>s+g.tokens.length,0);
+  if (curColl === 'weight')  return DATA.weight.length;
+  if (curColl === 'types')   return DATA.types.reduce((s,g)=>s+g.tokens.length,0);
+  if (curColl === 'iib')     return DATA.iib.reduce((s,g)=>s+g.tokens.length,0);
+  return 0;
+}
+
+function getExportRaw() {
+  if (expFmt === 'json') {
+    let obj;
+    if (curColl === 'feature') {
+      obj = { collection:'feature', groups: DATA.feature.map(g=>({ group:g.group, tokens:g.tokens.map(t=>({ name:t.name, light:toCSShex(t.L.h), dark:toCSShex(t.D.h), ref_light:t.L.r||null, ref_dark:t.D.r||null })) })) };
+    } else if (curColl === 'color') {
+      obj = { collection:'color', groups: DATA.color.map(g=>({ group:g.group, tokens:g.tokens.map(t=>({ name:t.name, value:toCSShex(t.h) })) })) };
+    } else if (curColl === 'radius') {
+      obj = { collection:'radius', tokens: DATA.radius.map(t=>({ name:t.name, value:t.value })) };
+    } else if (curColl === 'number') {
+      obj = { collection:'number', groups: DATA.number.map(g=>({ group:g.group, tokens:g.tokens.map(t=>({ name:t.name, value:t.value })) })) };
+    } else if (curColl === 'weight') {
+      obj = { collection:'weight', tokens: DATA.weight.map(t=>({ name:t.name, value:t.value })) };
+    } else if (curColl === 'types') {
+      obj = { collection:'types', groups: DATA.types.map(g=>({ group:g.group, tokens:g.tokens.map(t=>({ name:t.name, value:t.value })) })) };
+    } else if (curColl === 'iib') {
+      obj = { collection:'iib', groups: DATA.iib.map(g=>({ group:g.group, tokens:g.tokens.map(t=>({ name:t.name, light:toCSShex(t.L.h), dark:toCSShex(t.D.h) })) })) };
+    }
+    return JSON.stringify(obj, null, 2);
+  }
+
+  if (expFmt === 'android') {
+    const lines = ['<?xml version="1.0" encoding="utf-8"?>', '<resources>'];
+    if (curColl === 'feature') {
+      ['L','D'].forEach(m => {
+        DATA.feature.forEach(g => g.tokens.forEach(t => {
+          const n = `miuix_default_color_${t.name}${m==='L'?'_light':'_dark'}`;
+          const v = t[m].r ? '@color/'+toAndroidRef(t[m].r) : '#'+t[m].h;
+          lines.push(`    <color name="${n}">${v}</color>`);
+        }));
+      });
+    } else if (curColl === 'color') {
+      DATA.color.forEach(g => g.tokens.forEach(t => {
+        const n = 'miuix_color_'+t.name.replace(/-/g,'_');
+        const h = t.h.length===8 ? t.h.slice(2) : t.h;
+        lines.push(`    <color name="${n}">#${h}</color>`);
+      }));
+    } else if (curColl === 'radius') {
+      DATA.radius.forEach(t => lines.push(`    <dimen name="miuix_radius_${t.name}">${t.value}dp</dimen>`));
+    } else if (curColl === 'number') {
+      DATA.number.forEach(g => g.tokens.forEach(t => lines.push(`    <dimen name="miuix_number_${t.name}">${t.value}dp</dimen>`)));
+    } else if (curColl === 'weight') {
+      DATA.weight.forEach(t => lines.push(`    <integer name="miuix_weight_${t.name.toLowerCase()}">${t.value}</integer>`));
+    } else if (curColl === 'types') {
+      DATA.types.forEach(g => {
+        const isSize = g.group === 'Size';
+        g.tokens.forEach(t => {
+          const nk = t.name.toLowerCase().replace(/\s+/g,'_');
+          lines.push(isSize ? `    <dimen name="miuix_types_size_${nk}">${t.value}sp</dimen>` : `    <string name="miuix_types_weight_${nk}">${t.value}</string>`);
+        });
+      });
+    } else if (curColl === 'iib') {
+      ['L','D'].forEach(m => {
+        DATA.iib.forEach(g => g.tokens.forEach(t => {
+          const n = `iib_${t.name}${m==='L'?'_light':'_dark'}`;
+          lines.push(`    <color name="${n}">#${t[m].h}</color>`);
+        }));
+      });
+    }
+    lines.push('</resources>');
+    return lines.join('\n');
+  }
+
+  if (expFmt === 'css') {
+    const lines = [':root {'];
+    if (curColl === 'feature') {
+      DATA.feature.forEach(g => g.tokens.forEach(t => lines.push(`  --${t.name}: ${toCSShex(t[curMode].h)};`)));
+    } else if (curColl === 'color') {
+      DATA.color.forEach(g => g.tokens.forEach(t => lines.push(`  --${t.name}: ${toCSShex(t.h)};`)));
+    } else if (curColl === 'radius') {
+      DATA.radius.forEach(t => lines.push(`  --radius-${t.name}: ${t.value===999?'999':''+t.value}px;`));
+    } else if (curColl === 'number') {
+      DATA.number.forEach(g => g.tokens.forEach(t => lines.push(`  --${g.group}-${t.name}: ${t.value}px;`)));
+    } else if (curColl === 'weight') {
+      DATA.weight.forEach(t => lines.push(`  --weight-${t.name.toLowerCase()}: ${t.value};`));
+    } else if (curColl === 'types') {
+      DATA.types.forEach(g => {
+        const isSize = g.group === 'Size';
+        g.tokens.forEach(t => {
+          const nk = t.name.toLowerCase().replace(/\s+/g,'_');
+          lines.push(isSize ? `  --types-size-${nk}: ${t.value}sp;` : `  --types-weight-${nk}: ${String(t.value)};`);
+        });
+      });
+    } else if (curColl === 'iib') {
+      DATA.iib.forEach(g => g.tokens.forEach(t => {
+        lines.push(`  --${t.name}-light: ${toCSShex(t.L.h)};`);
+        lines.push(`  --${t.name}-dark: ${toCSShex(t.D.h)};`);
+      }));
+    }
+    lines.push('}');
+    return lines.join('\n');
+  }
+  return '';
+}
+
+function buildExportHtml() {
+  const raw = getExportRaw();
+  if (expFmt === 'json')    return hlJson(raw);
+  if (expFmt === 'android') return hlXml(raw);
+  if (expFmt === 'css')     return hlCss(raw);
+  return escHtml(raw);
+}
+
+function hlXml(raw) {
+  return raw.split('\n').map(line => {
+    let s = escHtml(line);
+    // XML declaration gray
+    s = s.replace(/^(&lt;\?xml .+?\?&gt;)/, '<span style="color:#9ca3af">$1</span>');
+    // tag name green
+    s = s.replace(/(&lt;\/?)([\w]+)/, '$1<span class="syn-key">$2</span>');
+    // attribute name blue
+    s = s.replace(/ ([\w:]+)=&quot;/g, ' <span class="syn-attr">$1</span>=&quot;');
+    // attribute value orange
+    s = s.replace(/=&quot;([^"]*?)&quot;/g, '=&quot;<span class="syn-val">$1</span>&quot;');
+    // text content between > and </
+    s = s.replace(/&gt;([^<&]+)&lt;\//g, '&gt;<span class="syn-tag">$1</span>&lt;/');
+    return s;
+  }).join('\n');
+}
+
+function hlCss(raw) {
+  return raw.split('\n').map(line => {
+    let s = escHtml(line);
+    // --property: value;
+    s = s.replace(/(--[\w-]+)(\s*:\s*)(.+?)(;)\s*$/, '<span class="syn-attr">$1</span><span class="syn-tag">$2</span><span class="syn-val">$3</span><span class="syn-tag">$4</span>');
+    return s;
+  }).join('\n');
+}
+
+function hlJson(raw) {
+  return raw.split('\n').map(line => {
+    let s = escHtml(line);
+    // string values after colon
+    s = s.replace(/(:\s*)(&quot;.*?&quot;)(,?)$/, '$1<span class="syn-val">$2</span>$3');
+    // null values
+    s = s.replace(/(:\s*)(null)(,?)$/, '$1<span style="color:#a78bfa">$2</span>$3');
+    // number values
+    s = s.replace(/(:\s*)(\d+(?:\.\d+)?)(,?)$/, '$1<span class="syn-key">$2</span>$3');
+    // keys (before the processed value)
+    s = s.replace(/^(\s*)(&quot;[^"]+&quot;)(\s*:)/, '$1<span class="syn-attr">$2</span>$3');
+    return s;
+  }).join('\n');
+}
+
+function copyExportContent() {
+  navigator.clipboard.writeText(getExportRaw()).catch(()=>{});
+  const btn = document.getElementById('exp-copy-btn2');
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 已复制`;
+    btn.style.color = '#22c55e'; btn.style.borderColor = '#22c55e';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+  }
+}
+
+function downloadExport() {
+  const raw = getExportRaw();
+  const ext  = expFmt === 'android' ? 'xml' : expFmt === 'css' ? 'css' : 'json';
+  const mime = expFmt === 'json' ? 'application/json' : 'text/plain';
+  const a = document.createElement('a');
+  a.href = 'data:'+mime+';charset=utf-8,'+encodeURIComponent(raw);
+  a.download = `${(COLL_NAMES[curColl]||curColl).replace(/\s/g,'_')}_tokens.${ext}`;
+  a.click();
+}
+
+function downloadAllJson() {
+  const all = {
+    version: '1.0',
+    exported: new Date().toISOString().slice(0,10),
+    collections: {
+      feature: DATA.feature.map(g => ({
+        group: g.group,
+        tokens: g.tokens.map(t => ({ name:t.name, light:toCSShex(t.L.h), dark:toCSShex(t.D.h), ref_light:t.L.r||null, ref_dark:t.D.r||null }))
+      })),
+      color: DATA.color.map(g => ({
+        group: g.group,
+        tokens: g.tokens.map(t => ({ name:t.name, value:toCSShex(t.h) }))
+      })),
+      radius: DATA.radius.map(t => ({ name:t.name, value:t.value })),
+      number: DATA.number.map(g => ({
+        group: g.group,
+        tokens: g.tokens.map(t => ({ name:t.name, value:t.value }))
+      })),
+      weight: DATA.weight.map(t => ({ name:t.name, value:t.value })),
+      types: DATA.types.map(g => ({
+        group: g.group,
+        tokens: g.tokens.map(t => ({ name:t.name, value:t.value }))
+      })),
+      iib: DATA.iib.map(g => ({
+        group: g.group,
+        tokens: g.tokens.map(t => ({ name:t.name, light:toCSShex(t.L.h), dark:toCSShex(t.D.h), ref_light:t.L.r||null, ref_dark:t.D.r||null }))
+      })),
+    }
+  };
+  const raw = JSON.stringify(all, null, 2);
+  const a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(raw);
+  a.download = 'IIB_Design_Tokens_All.json';
+  a.click();
+}
+
+function toggleShortcutPanel() {
+  const panel = document.getElementById('shortcut-panel');
+  panel.classList.toggle('open');
+  document.getElementById('sb-footer').style.color = panel.classList.contains('open') ? 'var(--accent, #3482ff)' : '';
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  const active = document.activeElement;
+  const isInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
+
+  if (e.key === 'Escape') {
+    if (document.getElementById('exp-overlay').classList.contains('open')) closeExportModal();
+    else if (document.getElementById('detail-panel').classList.contains('open')) closeDetail();
+    else if (document.getElementById('shortcut-panel').classList.contains('open')) toggleShortcutPanel();
+    else if (isInput) { active.blur(); }
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    const inp = document.getElementById('search-input');
+    if (inp) { inp.focus(); inp.select(); }
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'g') {
+    e.preventDefault();
+    setView(curView === 'list' ? 'grid' : 'list');
+  }
+});
+renderSidebar();
+renderView();
+</script>
+</body>
+</html>
