@@ -724,25 +724,23 @@ color: [
 ],
 
 radius: [
-  {name:'4',   value:4},
-  {name:'8',   value:8},
-  {name:'12',  value:12},
-  {name:'16',  value:16},
-  {name:'20',  value:20},
-  {name:'24',  value:24},
-  {name:'28',  value:28},
-  {name:'32',  value:32},
-  {name:'36',  value:36},
-  {name:'40',  value:40},
-  {name:'999', value:999},
+  {name:'tiny',     value:8},
+  {name:'small',    value:12},
+  {name:'common',   value:16},
+  {name:'medium',   value:20},
+  {name:'demi_big', value:24},
+  {name:'big',      value:36},
+  {name:'circle',   value:999},
 ],
 
 number: [
-  { group:'spacing', tokens:[
-    {name:'spacing/2',value:2},{name:'spacing/4',value:4},{name:'spacing/8',value:8},
-    {name:'spacing/10',value:10},{name:'spacing/12',value:12},{name:'spacing/16',value:16},
-    {name:'spacing/20',value:20},{name:'spacing/24',value:24},{name:'spacing/28',value:28},
-    {name:'spacing/32',value:32},
+  { group:'padding', tokens:[
+    {name:'padding_xs',value:8},{name:'padding_sm',value:12},{name:'padding_md',value:20},
+    {name:'padding_lg',value:28},{name:'padding_xl',value:56},
+  ]},
+  { group:'margin', tokens:[
+    {name:'top',value:4},{name:'base_horizontal',value:12},{name:'extra_horizontal',value:0},
+    {name:'bottom',value:28},{name:'item_vertical',value:12},{name:'item_horizontal',value:12},
   ]},
 ],
 
@@ -762,27 +760,19 @@ weight: [
 types: [
   { group:'Size', tokens:[
     {name:'Title 1',value:32},{name:'Title 2',value:24},{name:'Title 3',value:20},{name:'Title 4',value:18},
-    {name:'Headline 1',value:17},{name:'Headline 2',value:16},{name:'Headline 3',value:15},
-    {name:'Subtitle 1',value:14},{name:'Subtitle 2',value:14},{name:'Subtitle 3',value:14},
-    {name:'Body 1',value:16},{name:'Body 2',value:15},{name:'Body 3',value:14},
-    {name:'Footnote 1',value:13},{name:'Footnote 2',value:12},{name:'Footnote 3',value:11},
-    {name:'Button 1',value:17},{name:'Button 2',value:16},{name:'Button 3',value:14},{name:'Button 4',value:13},
+    {name:'Headline 1',value:17},{name:'Headline 2',value:16},
+    {name:'Subtitle',value:14},{name:'Subtitle 2',value:14},{name:'Subtitle 3',value:14},
+    {name:'Body 1',value:16},{name:'Body 2',value:14},
+    {name:'Footnote 1',value:13},{name:'Footnote 2',value:11},{name:'Footnote 3',value:11},
+    {name:'Button',value:17},
   ]},
   { group:'Weight', tokens:[
-    {name:'Title 1',value:'Medium'},{name:'Title 2',value:'Medium'},{name:'Title 3',value:'Medium'},{name:'Title 4',value:'Medium'},
-    {name:'Headline 1',value:'Medium'},{name:'Headline 2',value:'Medium'},{name:'Headline 3',value:'Medium'},
-    {name:'Subtitle 1',value:'Medium'},{name:'Subtitle 2',value:'Demibold'},{name:'Subtitle 3',value:'Regular'},
-    {name:'Body 1',value:'Medium'},{name:'Body 2',value:'Medium'},{name:'Body 3',value:'Medium'},
-    {name:'Footnote 1',value:'Medium'},{name:'Footnote 2',value:'Regular'},{name:'Footnote 3',value:'Medium'},
-    {name:'Button 1',value:'Medium'},{name:'Button 2',value:'Medium'},{name:'Button 3',value:'Medium'},{name:'Button 4',value:'Medium'},
-  ]},
-  { group:'Line Height', tokens:[
-    {name:'Title 1',value:'AUTO'},{name:'Title 2',value:'AUTO'},{name:'Title 3',value:'AUTO'},{name:'Title 4',value:'AUTO'},
-    {name:'Headline 1',value:'AUTO'},{name:'Headline 2',value:'AUTO'},{name:'Headline 3',value:'AUTO'},
-    {name:'Subtitle 1',value:'130%'},{name:'Subtitle 2',value:'130%'},{name:'Subtitle 3',value:'AUTO'},
-    {name:'Body 1',value:'150%'},{name:'Body 2',value:'150%'},{name:'Body 3',value:'150%'},
-    {name:'Footnote 1',value:'130%'},{name:'Footnote 2',value:'130%'},{name:'Footnote 3',value:'140%'},
-    {name:'Button 1',value:'120%'},{name:'Button 2',value:'120%'},{name:'Button 3',value:'120%'},{name:'Button 4',value:'AUTO'},
+    {name:'Title 1',value:'Regular'},{name:'Title 2',value:'Semibold'},{name:'Title 3',value:'Medium'},{name:'Title 4',value:'Medium'},
+    {name:'Headline 1',value:'Medium'},{name:'Headline 2',value:'Medium'},
+    {name:'Subtitle',value:'Medium'},{name:'Subtitle 2',value:'Demibold'},{name:'Subtitle 3',value:'Regular'},
+    {name:'Body 1',value:'Regular'},{name:'Body 2',value:'Regular'},
+    {name:'Footnote 1',value:'Regular'},{name:'Footnote 2',value:'Regular'},{name:'Footnote 3',value:'Demibold'},
+    {name:'Button',value:'Medium'},
   ]},
 ],
 
@@ -829,6 +819,47 @@ iib: [
     {name:'brand_aipet_pressed',   L:{h:'ffe5bb00'}, D:{h:'ffe5bb00'}},
     {name:'brand_aipet_disabled',  L:{h:'4dffd000'}, D:{h:'4dffd000'}},
     {name:'brand_aipet_secondary', L:{h:'1affd000'}, D:{h:'1affd000'}},
+  ]},
+],
+
+iibSpacing: [
+  {name:'spacing/2',value:2},{name:'spacing/4',value:4},{name:'spacing/8',value:8},
+  {name:'spacing/10',value:10},{name:'spacing/12',value:12},{name:'spacing/16',value:16},
+  {name:'spacing/20',value:20},{name:'spacing/24',value:24},{name:'spacing/28',value:28},
+  {name:'spacing/32',value:32},
+],
+
+iibRadius: [
+  {name:'radius/4',value:4},{name:'radius/8',value:8},{name:'radius/12',value:12},
+  {name:'radius/16',value:16},{name:'radius/20',value:20},{name:'radius/24',value:24},
+  {name:'radius/28',value:28},{name:'radius/32',value:32},{name:'radius/36',value:36},
+  {name:'radius/40',value:40},{name:'radius/999',value:999},
+],
+
+iibTypes: [
+  { group:'Size', tokens:[
+    {name:'Title 1',value:32},{name:'Title 2',value:24},{name:'Title 3',value:20},{name:'Title 4',value:18},
+    {name:'Headline 1',value:17},{name:'Headline 2',value:16},{name:'Headline 3',value:15},
+    {name:'Subtitle 1',value:14},{name:'Subtitle 2',value:14},{name:'Subtitle 3',value:14},
+    {name:'Body 1',value:16},{name:'Body 2',value:15},{name:'Body 3',value:14},
+    {name:'Footnote 1',value:13},{name:'Footnote 2',value:12},{name:'Footnote 3',value:11},
+    {name:'Button 1',value:17},{name:'Button 2',value:16},{name:'Button 3',value:14},{name:'Button 4',value:13},
+  ]},
+  { group:'Weight', tokens:[
+    {name:'Title 1',value:'Medium'},{name:'Title 2',value:'Medium'},{name:'Title 3',value:'Medium'},{name:'Title 4',value:'Medium'},
+    {name:'Headline 1',value:'Medium'},{name:'Headline 2',value:'Medium'},{name:'Headline 3',value:'Medium'},
+    {name:'Subtitle 1',value:'Medium'},{name:'Subtitle 2',value:'Demibold'},{name:'Subtitle 3',value:'Regular'},
+    {name:'Body 1',value:'Medium'},{name:'Body 2',value:'Medium'},{name:'Body 3',value:'Medium'},
+    {name:'Footnote 1',value:'Medium'},{name:'Footnote 2',value:'Regular'},{name:'Footnote 3',value:'Medium'},
+    {name:'Button 1',value:'Medium'},{name:'Button 2',value:'Medium'},{name:'Button 3',value:'Medium'},{name:'Button 4',value:'Medium'},
+  ]},
+  { group:'Line Height', tokens:[
+    {name:'Title 1',value:'AUTO'},{name:'Title 2',value:'AUTO'},{name:'Title 3',value:'AUTO'},{name:'Title 4',value:'AUTO'},
+    {name:'Headline 1',value:'AUTO'},{name:'Headline 2',value:'AUTO'},{name:'Headline 3',value:'AUTO'},
+    {name:'Subtitle 1',value:'130%'},{name:'Subtitle 2',value:'130%'},{name:'Subtitle 3',value:'AUTO'},
+    {name:'Body 1',value:'150%'},{name:'Body 2',value:'150%'},{name:'Body 3',value:'150%'},
+    {name:'Footnote 1',value:'130%'},{name:'Footnote 2',value:'130%'},{name:'Footnote 3',value:'140%'},
+    {name:'Button 1',value:'120%'},{name:'Button 2',value:'120%'},{name:'Button 3',value:'120%'},{name:'Button 4',value:'AUTO'},
   ]},
 ],
 
@@ -970,13 +1001,18 @@ const COUNTS = {
   weight:  DATA.weight.length,
   types:   DATA.types.reduce((s,g)=>s+g.tokens.length,0),
   iib:     DATA.iib.reduce((s,g)=>s+g.tokens.length,0),
+  iibSpacing: DATA.iibSpacing.length,
+  iibRadius:  DATA.iibRadius.length,
+  iibTypes:   DATA.iibTypes.reduce((s,g)=>s+g.tokens.length,0),
   interaction: 0,
 };
 
 const COLL_NAMES = {
   feature:'Feature Token', color:'Color Token', radius:'Radius Token',
   number:'Number Token', weight:'Weight Token', types:'Types Token',
-  iib:'IIB Brand Token', interaction:'交互反馈规则',
+  iib:'IIB Brand Token',
+  iibSpacing:'IIB Spacing', iibRadius:'IIB Radius', iibTypes:'IIB Types',
+  interaction:'交互反馈规则',
 };
 
 // ─── RENDER SIDEBAR ───────────────────────────────────────────────────────────
@@ -984,7 +1020,7 @@ function renderSidebar() {
   // Collections
   const sc = document.getElementById('sb-coll');
   sc.innerHTML = Object.keys(COLL_NAMES).map(id => `
-    ${(id === 'iib' || id === 'interaction') ? '<div class="coll-divider"></div>' : ''}
+    ${(id === 'iib' || id === 'interaction') ? '<div class="coll-divider"></div>' : (id === 'iibSpacing') ? '<div class="coll-divider" style="margin:2px 8px"></div>' : ''}
     <div class="coll-item${curColl===id?' active':''}" onclick="switchCollection('${id}')">
       <span>${COLL_NAMES[id]}</span>
       ${COUNTS[id] ? `<span class="coll-count">${COUNTS[id]}</span>` : ''}
@@ -993,16 +1029,16 @@ function renderSidebar() {
   // Groups
   const gl = document.getElementById('group-list');
   let groupsData = [];
-  if (['feature','color','number','types','iib'].includes(curColl)) {
+  if (['feature','color','number','types','iib','iibTypes'].includes(curColl)) {
     groupsData = DATA[curColl].map(g => ({
       name: g.group,
       count: g.tokens.length,
       tokens: g.tokens.map(t => t.name)
     }));
-  } else if (curColl === 'radius') {
-    groupsData = [{name:'全部', count: DATA.radius.length, tokens: DATA.radius.map(t=>t.name)}];
-  } else if (curColl === 'weight') {
-    groupsData = [{name:'全部', count: DATA.weight.length, tokens: DATA.weight.map(t=>t.name)}];
+  } else if (curColl === 'radius' || curColl === 'iibRadius') {
+    groupsData = [{name:'全部', count: DATA[curColl].length, tokens: DATA[curColl].map(t=>t.name)}];
+  } else if (curColl === 'weight' || curColl === 'iibSpacing') {
+    groupsData = [{name:'全部', count: DATA[curColl].length, tokens: DATA[curColl].map(t=>t.name)}];
   }
 
   gl.innerHTML = groupsData.map(g => {
@@ -1213,6 +1249,77 @@ function renderTable() {
     });
   }
 
+  else if (curColl === 'iibSpacing') {
+    const filtered = DATA.iibSpacing.filter(t => matchQ(t.name) || matchQ('spacing'));
+    if (filtered.length) {
+      rows += `<tr class="section-row"><td colspan="4">IIB Content Spacing &nbsp;<span style="font-weight:400;opacity:.5">${filtered.length}</span></td></tr>`;
+      filtered.forEach(t => {
+        visCount++;
+        const aName = 'iib_' + t.name.replace('/','_');
+        const synAndroid = syntaxDimen(aName, t.value, ' dp');
+        const synCss = syntaxCssDimen(t.name.replace('/','-'), t.value, 'px');
+        const syn = curSyntax === 'css' ? synCss : synAndroid;
+        const rid = `iibSpacing|全部|${t.name}`;
+        rows += `<tr onclick="openDetail('iibSpacing','全部','${t.name}')" data-rid="${rid}"${dpToken&&dpToken.rid===rid?' class="selected"':''}>
+          <td style="padding-top:9px;padding-bottom:9px"><div class="tok-name">${escHtml(t.name)}</div></td>
+          <td><div class="val-cell"><span class="val-num">${t.value}<span class="val-unit">dp</span></span></div></td>
+          <td><div class="syn-cell">${syn}</div></td>
+          <td><div class="ref-cell">—</div></td>
+        </tr>`;
+      });
+    }
+  }
+
+  else if (curColl === 'iibRadius') {
+    const filtered = DATA.iibRadius.filter(t => matchQ(t.name) || matchQ('radius'));
+    if (filtered.length) {
+      rows += `<tr class="section-row"><td colspan="4">IIB Content Radius &nbsp;<span style="font-weight:400;opacity:.5">${filtered.length}</span></td></tr>`;
+      filtered.forEach(t => {
+        visCount++;
+        const aName = 'iib_' + t.name.replace('/','_');
+        const valStr = t.value === 999 ? '999 (circle)' : t.value + 'dp';
+        const synAndroid = syntaxDimen(aName, t.value, ' dp');
+        const synCss = syntaxCssDimen(t.name.replace('/','-'), t.value, 'px');
+        const syn = curSyntax === 'css' ? synCss : synAndroid;
+        const rid = `iibRadius|全部|${t.name}`;
+        rows += `<tr onclick="openDetail('iibRadius','全部','${t.name}')" data-rid="${rid}"${dpToken&&dpToken.rid===rid?' class="selected"':''}>
+          <td style="padding-top:9px;padding-bottom:9px"><div class="tok-name">${escHtml(t.name)}</div></td>
+          <td><div class="val-cell"><span class="val-num">${t.value}<span class="val-unit">dp</span></span></div></td>
+          <td><div class="syn-cell">${syn}</div></td>
+          <td><div class="ref-cell">—</div></td>
+        </tr>`;
+      });
+    }
+  }
+
+  else if (curColl === 'iibTypes') {
+    const groups = DATA.iibTypes;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      rows += `<tr class="section-row" data-grp="${escHtml(g.group)}"><td colspan="4">${g.group} &nbsp;<span style="font-weight:400;opacity:.5">${filtered.length}</span></td></tr>`;
+      filtered.forEach(t => {
+        visCount++;
+        const nKey = t.name.toLowerCase().replace(/\s+/g,'_');
+        const isSize = g.group === 'Size';
+        const aName = isSize ? `iib_types_size_${nKey}` : `iib_types_weight_${nKey}`;
+        const synAndroid = isSize ? syntaxDimen(aName, t.value, 'sp') : syntaxStr(aName, t.value);
+        const synCss = isSize ? syntaxCssDimen(`iib-types-size-${nKey}`, t.value, 'sp') : syntaxCssStr(`iib-types-weight-${nKey}`, t.value);
+        const syn = curSyntax === 'css' ? synCss : synAndroid;
+        const valCell = isSize
+          ? `<span class="val-num">${t.value}<span class="val-unit">sp</span></span>`
+          : `<span class="val-text">${escHtml(String(t.value))}</span>`;
+        const rid = `iibTypes|${g.group}|${t.name}`;
+        rows += `<tr onclick="openDetail('iibTypes','${g.group}','${t.name}')" data-rid="${rid}"${dpToken&&dpToken.rid===rid?' class="selected"':''}>
+          <td style="padding-top:9px;padding-bottom:9px"><div class="tok-name">${escHtml(t.name)}</div></td>
+          <td><div class="val-cell">${valCell}</div></td>
+          <td><div class="syn-cell">${syn}</div></td>
+          <td><div class="ref-cell">—</div></td>
+        </tr>`;
+      });
+    });
+  }
+
   if (!rows && q) {
     rows = `<tr><td colspan="4"><div class="empty-state">
       <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6M11 8v6" opacity=".5"/></svg>
@@ -1229,7 +1336,7 @@ function renderTable() {
 }
 
 // ─── VIEW TOGGLE ──────────────────────────────────────────────────────────────
-const GRID_COLLS = new Set(['feature','color','radius','number','weight','types','iib']);
+const GRID_COLLS = new Set(['feature','color','radius','number','weight','types','iib','iibSpacing','iibRadius','iibTypes']);
 
 const DESC_MAP = {
   // 文字图标色
@@ -1570,6 +1677,42 @@ function renderGrid() {
     });
   }
 
+  else if (curColl === 'iibSpacing' || curColl === 'iibRadius') {
+    const data = DATA[curColl];
+    const label = curColl === 'iibSpacing' ? 'IIB Content Spacing' : 'IIB Content Radius';
+    const filtered = data.filter(t => matchQ(t.name));
+    if (filtered.length) {
+      html += `<div class="grid-section"><div class="grid-section-hd">${label} <span style="font-weight:400;opacity:.5">${filtered.length}</span></div><div class="grid-cards">`;
+      filtered.forEach(t => {
+        html += `<div class="grid-card" data-rid="${curColl}|全部|${t.name}" onclick="openDetail('${curColl}','全部','${t.name}')">
+          <div class="grid-preview"><span style="font-size:20px;font-weight:600;color:var(--accent,#3482ff)">${t.value}</span></div>
+          <div class="grid-card-body"><div class="grid-card-name">${escHtml(t.name)}</div><div class="grid-card-ref">${t.value}dp</div></div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+  }
+
+  else if (curColl === 'iibTypes') {
+    const groups = DATA.iibTypes;
+    groups.forEach(g => {
+      const filtered = g.tokens.filter(t => matchQ(t.name) || matchQ(g.group));
+      if (!filtered.length) return;
+      html += `<div class="grid-section"><div class="grid-section-hd">${g.group} <span style="font-weight:400;opacity:.5">${filtered.length}</span></div><div class="grid-cards">`;
+      filtered.forEach(t => {
+        const isSize = g.group === 'Size';
+        const preview = isSize
+          ? `<span class="types-sample" style="font-size:${Math.min(t.value, 32)}px">Aa</span>`
+          : `<span class="types-sample" style="font-size:22px;font-weight:${t.value === 'Medium' ? 500 : t.value === 'Semibold' ? 600 : t.value === 'Demibold' ? 550 : t.value === 'Regular' ? 400 : 400}">${escHtml(String(t.value))}</span>`;
+        html += `<div class="grid-card" data-rid="iibTypes|${g.group}|${t.name}" onclick="openDetail('iibTypes','${g.group}','${t.name}')">
+          <div class="grid-preview">${preview}</div>
+          <div class="grid-card-body"><div class="grid-card-name">${escHtml(t.name)}</div><div class="grid-card-ref">${isSize ? t.value + ' sp' : escHtml(String(t.value))}</div></div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+  }
+
   wrap.innerHTML = html || `<div style="padding:40px;color:#a3a3a3;font-size:13px">无匹配结果</div>`;
   // restore selected state after re-render
   if (dpToken) {
@@ -1780,6 +1923,23 @@ function buildCodeSnippet() {
     if (curSyntax === 'css') return escHtml(`--${name}-${curMode==='L'?'light':'dark'}: ${toCSShex(h)};`);
     return escHtml(`<color name="${aName}">#${h}</color>`);
   }
+  if (coll === 'iibSpacing' || coll === 'iibRadius') {
+    const t = DATA[coll].find(x=>x.name===name);
+    if (!t) return '';
+    const aName = 'iib_' + t.name.replace('/','_');
+    if (curSyntax === 'css') return escHtml(`--${t.name.replace('/','-')}: ${t.value}px;`);
+    return escHtml(`<dimen name="${aName}">${t.value}dp</dimen>`);
+  }
+  if (coll === 'iibTypes') {
+    const g3 = DATA.iibTypes.find(x=>x.group===group);
+    const t = g3 ? g3.tokens.find(x=>x.name===name) : null;
+    if (!t) return '';
+    const nKey = name.toLowerCase().replace(/\s+/g,'_');
+    const isSize = group === 'Size';
+    if (curSyntax === 'css') return isSize ? escHtml(`--iib-types-size-${nKey}: ${t.value}sp;`) : escHtml(`--iib-types-${group.toLowerCase().replace(/\s+/g,'-')}-${nKey}: ${String(t.value)};`);
+    const aName = isSize ? `iib_types_size_${nKey}` : `iib_types_${group.toLowerCase().replace(/\s+/g,'_')}_${nKey}`;
+    return isSize ? escHtml(`<dimen name="${aName}">${t.value}sp</dimen>`) : escHtml(`<string name="${aName}">${t.value}</string>`);
+  }
   return '';
 }
 
@@ -1961,6 +2121,16 @@ function buildDpBody() {
         const isSize = group === 'Size';
         valHtml = `<div style="padding:12px 0 16px"><span style="font-size:${isSize?Math.min(t.value,32)+'px':'22px'};font-family:'MiSans VF','MiSans','Inter',sans-serif;color:inherit">${isSize?'Aa':escHtml(String(t.value))}</span></div><div class="dp-color-row"><span class="dp-color-label">值</span><span class="dp-color-val">${escHtml(String(t.value))}${isSize?' sp':''}</span></div>`;
       }
+    } else if (coll === 'iibSpacing' || coll === 'iibRadius') {
+      const t = DATA[coll].find(x=>x.name===name);
+      if (t) valHtml = `<div class="dp-color-row"><span class="dp-color-label">值</span><span class="dp-color-val">${t.value} dp</span></div><div class="dp-color-row"><span class="dp-color-label">集合</span><span class="dp-color-val">${coll === 'iibSpacing' ? 'IIB Content Spacing' : 'IIB Content Radius'}</span></div>`;
+    } else if (coll === 'iibTypes') {
+      const g3 = DATA.iibTypes.find(x=>x.group===group);
+      const t = g3 ? g3.tokens.find(x=>x.name===name) : null;
+      if (t) {
+        const isSize = group === 'Size';
+        valHtml = `<div style="padding:12px 0 16px"><span style="font-size:${isSize?Math.min(t.value,32)+'px':'22px'};font-family:'MiSans VF','MiSans','Inter',sans-serif;color:inherit">${isSize?'Aa':escHtml(String(t.value))}</span></div><div class="dp-color-row"><span class="dp-color-label">值</span><span class="dp-color-val">${escHtml(String(t.value))}${isSize?' sp':''}</span></div>`;
+      }
     }
     if (valHtml) html += `<div class="dp-section"><div class="dp-section-label">当前值</div>${valHtml}</div>`;
   }
@@ -2032,6 +2202,9 @@ function getExpTokenCount() {
   if (curColl === 'weight')  return DATA.weight.length;
   if (curColl === 'types')   return DATA.types.reduce((s,g)=>s+g.tokens.length,0);
   if (curColl === 'iib')     return DATA.iib.reduce((s,g)=>s+g.tokens.length,0);
+  if (curColl === 'iibSpacing') return DATA.iibSpacing.length;
+  if (curColl === 'iibRadius')  return DATA.iibRadius.length;
+  if (curColl === 'iibTypes')   return DATA.iibTypes.reduce((s,g)=>s+g.tokens.length,0);
   return 0;
 }
 
@@ -2052,6 +2225,12 @@ function getExportRaw() {
       obj = { collection:'types', groups: DATA.types.map(g=>({ group:g.group, tokens:g.tokens.map(t=>({ name:t.name, value:t.value })) })) };
     } else if (curColl === 'iib') {
       obj = { collection:'iib', groups: DATA.iib.map(g=>({ group:g.group, tokens:g.tokens.map(t=>({ name:t.name, light:toCSShex(t.L.h), dark:toCSShex(t.D.h) })) })) };
+    } else if (curColl === 'iibSpacing') {
+      obj = { collection:'iibSpacing', tokens: DATA.iibSpacing.map(t=>({ name:t.name, value:t.value })) };
+    } else if (curColl === 'iibRadius') {
+      obj = { collection:'iibRadius', tokens: DATA.iibRadius.map(t=>({ name:t.name, value:t.value })) };
+    } else if (curColl === 'iibTypes') {
+      obj = { collection:'iibTypes', groups: DATA.iibTypes.map(g=>({ group:g.group, tokens:g.tokens.map(t=>({ name:t.name, value:t.value })) })) };
     }
     return JSON.stringify(obj, null, 2);
   }
@@ -2093,6 +2272,18 @@ function getExportRaw() {
           lines.push(`    <color name="${n}">#${t[m].h}</color>`);
         }));
       });
+    } else if (curColl === 'iibSpacing') {
+      DATA.iibSpacing.forEach(t => lines.push(`    <dimen name="iib_${t.name.replace('/','_')}">${t.value}dp</dimen>`));
+    } else if (curColl === 'iibRadius') {
+      DATA.iibRadius.forEach(t => lines.push(`    <dimen name="iib_${t.name.replace('/','_')}">${t.value}dp</dimen>`));
+    } else if (curColl === 'iibTypes') {
+      DATA.iibTypes.forEach(g => {
+        const isSize = g.group === 'Size';
+        g.tokens.forEach(t => {
+          const nk = t.name.toLowerCase().replace(/\s+/g,'_');
+          lines.push(isSize ? `    <dimen name="iib_types_size_${nk}">${t.value}sp</dimen>` : `    <string name="iib_types_${g.group.toLowerCase().replace(/\s+/g,'_')}_${nk}">${t.value}</string>`);
+        });
+      });
     }
     lines.push('</resources>');
     return lines.join('\n');
@@ -2123,6 +2314,18 @@ function getExportRaw() {
         lines.push(`  --${t.name}-light: ${toCSShex(t.L.h)};`);
         lines.push(`  --${t.name}-dark: ${toCSShex(t.D.h)};`);
       }));
+    } else if (curColl === 'iibSpacing') {
+      DATA.iibSpacing.forEach(t => lines.push(`  --${t.name.replace('/','-')}: ${t.value}px;`));
+    } else if (curColl === 'iibRadius') {
+      DATA.iibRadius.forEach(t => lines.push(`  --${t.name.replace('/','-')}: ${t.value}px;`));
+    } else if (curColl === 'iibTypes') {
+      DATA.iibTypes.forEach(g => {
+        const isSize = g.group === 'Size';
+        g.tokens.forEach(t => {
+          const nk = t.name.toLowerCase().replace(/\s+/g,'_');
+          lines.push(isSize ? `  --iib-types-size-${nk}: ${t.value}sp;` : `  --iib-types-${g.group.toLowerCase().replace(/\s+/g,'-')}-${nk}: ${String(t.value)};`);
+        });
+      });
     }
     lines.push('}');
     return lines.join('\n');
@@ -2226,6 +2429,12 @@ function downloadAllJson() {
       iib: DATA.iib.map(g => ({
         group: g.group,
         tokens: g.tokens.map(t => ({ name:t.name, light:toCSShex(t.L.h), dark:toCSShex(t.D.h), ref_light:t.L.r||null, ref_dark:t.D.r||null }))
+      })),
+      iibSpacing: DATA.iibSpacing.map(t => ({ name:t.name, value:t.value })),
+      iibRadius: DATA.iibRadius.map(t => ({ name:t.name, value:t.value })),
+      iibTypes: DATA.iibTypes.map(g => ({
+        group: g.group,
+        tokens: g.tokens.map(t => ({ name:t.name, value:t.value }))
       })),
     }
   };
