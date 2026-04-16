@@ -823,17 +823,17 @@ iib: [
 ],
 
 iibSpacing: [
-  {name:'spacing/2',value:2},{name:'spacing/4',value:4},{name:'spacing/8',value:8},
-  {name:'spacing/10',value:10},{name:'spacing/12',value:12},{name:'spacing/16',value:16},
-  {name:'spacing/20',value:20},{name:'spacing/24',value:24},{name:'spacing/28',value:28},
-  {name:'spacing/32',value:32},
+  {name:'spacing_2',value:2},{name:'spacing_4',value:4},{name:'spacing_8',value:8},
+  {name:'spacing_10',value:10},{name:'spacing_12',value:12},{name:'spacing_16',value:16},
+  {name:'spacing_20',value:20},{name:'spacing_24',value:24},{name:'spacing_28',value:28},
+  {name:'spacing_32',value:32},
 ],
 
 iibRadius: [
-  {name:'radius/4',value:4},{name:'radius/8',value:8},{name:'radius/12',value:12},
-  {name:'radius/16',value:16},{name:'radius/20',value:20},{name:'radius/24',value:24},
-  {name:'radius/28',value:28},{name:'radius/32',value:32},{name:'radius/36',value:36},
-  {name:'radius/40',value:40},{name:'radius/999',value:999},
+  {name:'radius_4',value:4},{name:'radius_8',value:8},{name:'radius_12',value:12},
+  {name:'radius_16',value:16},{name:'radius_20',value:20},{name:'radius_24',value:24},
+  {name:'radius_28',value:28},{name:'radius_32',value:32},{name:'radius_36',value:36},
+  {name:'radius_40',value:40},{name:'radius_999',value:999},
 ],
 
 iibTypes: [
@@ -1011,7 +1011,7 @@ const COLL_NAMES = {
   feature:'Feature Token', color:'Color Token', radius:'Radius Token',
   number:'Number Token', weight:'Weight Token', types:'Types Token',
   iib:'IIB Brand Token',
-  iibSpacing:'IIB Spacing', iibRadius:'IIB Radius', iibTypes:'IIB Types',
+  iibSpacing:'IIB Spacing Token', iibRadius:'IIB Radius Token', iibTypes:'IIB Types Token',
   interaction:'交互反馈规则',
 };
 
@@ -1020,7 +1020,7 @@ function renderSidebar() {
   // Collections
   const sc = document.getElementById('sb-coll');
   sc.innerHTML = Object.keys(COLL_NAMES).map(id => `
-    ${(id === 'iib' || id === 'interaction') ? '<div class="coll-divider"></div>' : (id === 'iibSpacing') ? '<div class="coll-divider" style="margin:2px 8px"></div>' : ''}
+    ${(id === 'iib' || id === 'interaction') ? '<div class="coll-divider"></div>' : ''}
     <div class="coll-item${curColl===id?' active':''}" onclick="switchCollection('${id}')">
       <span>${COLL_NAMES[id]}</span>
       ${COUNTS[id] ? `<span class="coll-count">${COUNTS[id]}</span>` : ''}
