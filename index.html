@@ -724,23 +724,25 @@ color: [
 ],
 
 radius: [
-  {name:'tiny',     value:8},
-  {name:'small',    value:12},
-  {name:'common',   value:16},
-  {name:'medium',   value:20},
-  {name:'demi_big', value:24},
-  {name:'big',      value:36},
-  {name:'circle',   value:999},
+  {name:'4',   value:4},
+  {name:'8',   value:8},
+  {name:'12',  value:12},
+  {name:'16',  value:16},
+  {name:'20',  value:20},
+  {name:'24',  value:24},
+  {name:'28',  value:28},
+  {name:'32',  value:32},
+  {name:'36',  value:36},
+  {name:'40',  value:40},
+  {name:'999', value:999},
 ],
 
 number: [
-  { group:'padding', tokens:[
-    {name:'padding_xs',value:8},{name:'padding_sm',value:12},{name:'padding_md',value:20},
-    {name:'padding_lg',value:28},{name:'padding_xl',value:56},
-  ]},
-  { group:'margin', tokens:[
-    {name:'top',value:4},{name:'base_horizontal',value:12},{name:'extra_horizontal',value:0},
-    {name:'bottom',value:28},{name:'item_vertical',value:12},{name:'item_horizontal',value:12},
+  { group:'spacing', tokens:[
+    {name:'spacing/2',value:2},{name:'spacing/4',value:4},{name:'spacing/8',value:8},
+    {name:'spacing/10',value:10},{name:'spacing/12',value:12},{name:'spacing/16',value:16},
+    {name:'spacing/20',value:20},{name:'spacing/24',value:24},{name:'spacing/28',value:28},
+    {name:'spacing/32',value:32},
   ]},
 ],
 
@@ -760,19 +762,27 @@ weight: [
 types: [
   { group:'Size', tokens:[
     {name:'Title 1',value:32},{name:'Title 2',value:24},{name:'Title 3',value:20},{name:'Title 4',value:18},
-    {name:'Headline 1',value:17},{name:'Headline 2',value:16},
-    {name:'Subtitle',value:14},{name:'Subtitle 2',value:14},{name:'Subtitle 3',value:14},
-    {name:'Body 1',value:16},{name:'Body 2',value:14},
-    {name:'Footnote 1',value:13},{name:'Footnote 2',value:11},{name:'Footnote 3',value:11},
-    {name:'Button',value:17},
+    {name:'Headline 1',value:17},{name:'Headline 2',value:16},{name:'Headline 3',value:15},
+    {name:'Subtitle 1',value:14},{name:'Subtitle 2',value:14},{name:'Subtitle 3',value:14},
+    {name:'Body 1',value:16},{name:'Body 2',value:15},{name:'Body 3',value:14},
+    {name:'Footnote 1',value:13},{name:'Footnote 2',value:12},{name:'Footnote 3',value:11},
+    {name:'Button 1',value:17},{name:'Button 2',value:16},{name:'Button 3',value:14},{name:'Button 4',value:13},
   ]},
   { group:'Weight', tokens:[
-    {name:'Title 1',value:'Regular'},{name:'Title 2',value:'Semibold'},{name:'Title 3',value:'Medium'},{name:'Title 4',value:'Medium'},
-    {name:'Headline 1',value:'Medium'},{name:'Headline 2',value:'Medium'},
-    {name:'Subtitle',value:'Medium'},{name:'Subtitle 2',value:'Demibold'},{name:'Subtitle 3',value:'Regular'},
-    {name:'Body 1',value:'Regular'},{name:'Body 2',value:'Regular'},
-    {name:'Footnote 1',value:'Regular'},{name:'Footnote 2',value:'Regular'},{name:'Footnote 3',value:'Demibold'},
-    {name:'Button',value:'Medium'},
+    {name:'Title 1',value:'Medium'},{name:'Title 2',value:'Medium'},{name:'Title 3',value:'Medium'},{name:'Title 4',value:'Medium'},
+    {name:'Headline 1',value:'Medium'},{name:'Headline 2',value:'Medium'},{name:'Headline 3',value:'Medium'},
+    {name:'Subtitle 1',value:'Medium'},{name:'Subtitle 2',value:'Demibold'},{name:'Subtitle 3',value:'Regular'},
+    {name:'Body 1',value:'Medium'},{name:'Body 2',value:'Medium'},{name:'Body 3',value:'Medium'},
+    {name:'Footnote 1',value:'Medium'},{name:'Footnote 2',value:'Regular'},{name:'Footnote 3',value:'Medium'},
+    {name:'Button 1',value:'Medium'},{name:'Button 2',value:'Medium'},{name:'Button 3',value:'Medium'},{name:'Button 4',value:'Medium'},
+  ]},
+  { group:'Line Height', tokens:[
+    {name:'Title 1',value:'AUTO'},{name:'Title 2',value:'AUTO'},{name:'Title 3',value:'AUTO'},{name:'Title 4',value:'AUTO'},
+    {name:'Headline 1',value:'AUTO'},{name:'Headline 2',value:'AUTO'},{name:'Headline 3',value:'AUTO'},
+    {name:'Subtitle 1',value:'130%'},{name:'Subtitle 2',value:'130%'},{name:'Subtitle 3',value:'AUTO'},
+    {name:'Body 1',value:'150%'},{name:'Body 2',value:'150%'},{name:'Body 3',value:'150%'},
+    {name:'Footnote 1',value:'130%'},{name:'Footnote 2',value:'130%'},{name:'Footnote 3',value:'140%'},
+    {name:'Button 1',value:'120%'},{name:'Button 2',value:'120%'},{name:'Button 3',value:'120%'},{name:'Button 4',value:'AUTO'},
   ]},
 ],
 
