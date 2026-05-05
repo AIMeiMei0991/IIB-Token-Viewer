@@ -808,11 +808,11 @@ iib: [
     {name:'brand_gamehub_disabled',  L:{h:'33ffe249'}, D:{h:'33ffe249'}},
     {name:'brand_gamehub_secondary', L:{h:'66ffe249'}, D:{h:'33ffe249'}},
   ]},
-  { group:'Music Purple', tokens:[
-    {name:'brand_music_default',   L:{h:'ff6e00cc'}, D:{h:'ff6603ba'}},
-    {name:'brand_music_pressed',   L:{h:'ff6500bc'}, D:{h:'ff7217c0'}},
-    {name:'brand_music_disabled',  L:{h:'4d6e00cc'}, D:{h:'4d6603ba'}},
-    {name:'brand_music_secondary', L:{h:'1a6e00cc'}, D:{h:'336603ba'}},
+  { group:'Music', tokens:[
+    {name:'brand_music_default',   L:{h:'ff000000'}, D:{h:'ffffffff'}},
+    {name:'brand_music_pressed',   L:{h:'ff1a1a1a'}, D:{h:'ffe6e6e6'}},
+    {name:'brand_music_disabled',  L:{h:'4d000000'}, D:{h:'4dffffff'}},
+    {name:'brand_music_secondary', L:{h:'14000000'}, D:{h:'33ffffff'}},
   ]},
   { group:'AI Pet Yellow', tokens:[
     {name:'brand_aipet_default',   L:{h:'ffffd000', r:'lemonyellow/color-lemonyellow-light'}, D:{h:'ffffd000', r:'lemonyellow/color-lemonyellow-light'}},
@@ -823,10 +823,10 @@ iib: [
 ],
 
 iibSpacing: [
-  {name:'spacing_2',value:2},{name:'spacing_4',value:4},{name:'spacing_8',value:8},
-  {name:'spacing_10',value:10},{name:'spacing_12',value:12},{name:'spacing_16',value:16},
-  {name:'spacing_20',value:20},{name:'spacing_24',value:24},{name:'spacing_28',value:28},
-  {name:'spacing_32',value:32},
+  {name:'spacing_2',value:2},{name:'spacing_4',value:4},{name:'spacing_6',value:6},
+  {name:'spacing_8',value:8},{name:'spacing_10',value:10},{name:'spacing_12',value:12},
+  {name:'spacing_16',value:16},{name:'spacing_20',value:20},{name:'spacing_24',value:24},
+  {name:'spacing_28',value:28},{name:'spacing_32',value:32},
 ],
 
 iibRadius: [
@@ -842,7 +842,7 @@ iibTypes: [
     {name:'Headline 1',value:17},{name:'Headline 2',value:16},{name:'Headline 3',value:15},
     {name:'Subtitle 1',value:14},{name:'Subtitle 2',value:14},{name:'Subtitle 3',value:14},
     {name:'Body 1',value:16},{name:'Body 2',value:15},{name:'Body 3',value:14},
-    {name:'Footnote 1',value:13},{name:'Footnote 2',value:12},{name:'Footnote 3',value:11},
+    {name:'Footnote 1',value:13},{name:'Footnote 2',value:12},{name:'Footnote 3',value:11},{name:'Footnote 4',value:11},
     {name:'Button 1',value:17},{name:'Button 2',value:16},{name:'Button 3',value:14},{name:'Button 4',value:13},
   ]},
   { group:'Weight', tokens:[
@@ -850,7 +850,7 @@ iibTypes: [
     {name:'Headline 1',value:'Medium'},{name:'Headline 2',value:'Medium'},{name:'Headline 3',value:'Medium'},
     {name:'Subtitle 1',value:'Medium'},{name:'Subtitle 2',value:'Demibold'},{name:'Subtitle 3',value:'Regular'},
     {name:'Body 1',value:'Medium'},{name:'Body 2',value:'Medium'},{name:'Body 3',value:'Medium'},
-    {name:'Footnote 1',value:'Medium'},{name:'Footnote 2',value:'Regular'},{name:'Footnote 3',value:'Medium'},
+    {name:'Footnote 1',value:'Regular'},{name:'Footnote 2',value:'Regular'},{name:'Footnote 3',value:'Medium'},{name:'Footnote 4',value:'Regular'},
     {name:'Button 1',value:'Medium'},{name:'Button 2',value:'Medium'},{name:'Button 3',value:'Medium'},{name:'Button 4',value:'Medium'},
   ]},
   { group:'Line Height', tokens:[
@@ -858,7 +858,7 @@ iibTypes: [
     {name:'Headline 1',value:'AUTO'},{name:'Headline 2',value:'AUTO'},{name:'Headline 3',value:'AUTO'},
     {name:'Subtitle 1',value:'130%'},{name:'Subtitle 2',value:'130%'},{name:'Subtitle 3',value:'AUTO'},
     {name:'Body 1',value:'150%'},{name:'Body 2',value:'150%'},{name:'Body 3',value:'150%'},
-    {name:'Footnote 1',value:'130%'},{name:'Footnote 2',value:'130%'},{name:'Footnote 3',value:'140%'},
+    {name:'Footnote 1',value:'130%'},{name:'Footnote 2',value:'130%'},{name:'Footnote 3',value:'140%'},{name:'Footnote 4',value:'AUTO'},
     {name:'Button 1',value:'120%'},{name:'Button 2',value:'120%'},{name:'Button 3',value:'120%'},{name:'Button 4',value:'AUTO'},
   ]},
 ],
@@ -1478,11 +1478,11 @@ const DESC_MAP = {
   brand_theme_pressed:           '主题橙 · 按压态',
   brand_theme_disabled:          '主题橙 · 禁用态',
   brand_theme_secondary:         '主题橙 · 次要 / 浅色背景',
-  // iib - Music Purple
-  brand_music_default:           '音乐紫 · 默认',
-  brand_music_pressed:           '音乐紫 · 按压态',
-  brand_music_disabled:          '音乐紫 · 禁用态',
-  brand_music_secondary:         '音乐紫 · 次要 / 浅色背景',
+  // iib - Music
+  brand_music_default:           '音乐 · 默认',
+  brand_music_pressed:           '音乐 · 按压态',
+  brand_music_disabled:          '音乐 · 禁用态',
+  brand_music_secondary:         '音乐 · 次要 / 浅色背景',
 };
 
 function renderView() {
