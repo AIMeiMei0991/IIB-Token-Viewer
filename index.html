@@ -1026,8 +1026,9 @@ const COLL_NAMES = {
 // ─── RENDER SIDEBAR ───────────────────────────────────────────────────────────
 function renderSidebar() {
   // Collections
+  const HIDDEN_COLLS = ['radius', 'number', 'weight', 'types'];
   const sc = document.getElementById('sb-coll');
-  sc.innerHTML = Object.keys(COLL_NAMES).map(id => `
+  sc.innerHTML = Object.keys(COLL_NAMES).filter(id => !HIDDEN_COLLS.includes(id)).map(id => `
     ${(id === 'iib' || id === 'interaction') ? '<div class="coll-divider"></div>' : ''}
     <div class="coll-item${curColl===id?' active':''}" onclick="switchCollection('${id}')">
       <span>${COLL_NAMES[id]}</span>
